@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class ProdutoServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """==================== SERVIÇO DE PRODUTOS ====================
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -44,15 +45,16 @@ class ProdutoServiceStub(object):
                 request_serializer=produto__pb2.Empty.SerializeToString,
                 response_deserializer=produto__pb2.ListaProdutos.FromString,
                 _registered_method=True)
-        self.CriarProduto = channel.unary_unary(
-                '/loja.ProdutoService/CriarProduto',
-                request_serializer=produto__pb2.Produto.SerializeToString,
+        self.AtualizarEstoque = channel.unary_unary(
+                '/loja.ProdutoService/AtualizarEstoque',
+                request_serializer=produto__pb2.AtualizarEstoqueRequest.SerializeToString,
                 response_deserializer=produto__pb2.Produto.FromString,
                 _registered_method=True)
 
 
 class ProdutoServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """==================== SERVIÇO DE PRODUTOS ====================
+    """
 
     def GetProduto(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -66,7 +68,7 @@ class ProdutoServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CriarProduto(self, request, context):
+    def AtualizarEstoque(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -85,9 +87,9 @@ def add_ProdutoServiceServicer_to_server(servicer, server):
                     request_deserializer=produto__pb2.Empty.FromString,
                     response_serializer=produto__pb2.ListaProdutos.SerializeToString,
             ),
-            'CriarProduto': grpc.unary_unary_rpc_method_handler(
-                    servicer.CriarProduto,
-                    request_deserializer=produto__pb2.Produto.FromString,
+            'AtualizarEstoque': grpc.unary_unary_rpc_method_handler(
+                    servicer.AtualizarEstoque,
+                    request_deserializer=produto__pb2.AtualizarEstoqueRequest.FromString,
                     response_serializer=produto__pb2.Produto.SerializeToString,
             ),
     }
@@ -99,7 +101,8 @@ def add_ProdutoServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class ProdutoService(object):
-    """Missing associated documentation comment in .proto file."""
+    """==================== SERVIÇO DE PRODUTOS ====================
+    """
 
     @staticmethod
     def GetProduto(request,
@@ -156,7 +159,7 @@ class ProdutoService(object):
             _registered_method=True)
 
     @staticmethod
-    def CriarProduto(request,
+    def AtualizarEstoque(request,
             target,
             options=(),
             channel_credentials=None,
@@ -169,9 +172,374 @@ class ProdutoService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/loja.ProdutoService/CriarProduto',
-            produto__pb2.Produto.SerializeToString,
+            '/loja.ProdutoService/AtualizarEstoque',
+            produto__pb2.AtualizarEstoqueRequest.SerializeToString,
             produto__pb2.Produto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class ClienteServiceStub(object):
+    """==================== SERVIÇO DE CLIENTES ====================
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.RegistrarCliente = channel.unary_unary(
+                '/loja.ClienteService/RegistrarCliente',
+                request_serializer=produto__pb2.Cliente.SerializeToString,
+                response_deserializer=produto__pb2.Cliente.FromString,
+                _registered_method=True)
+        self.GetCliente = channel.unary_unary(
+                '/loja.ClienteService/GetCliente',
+                request_serializer=produto__pb2.ClienteId.SerializeToString,
+                response_deserializer=produto__pb2.Cliente.FromString,
+                _registered_method=True)
+        self.ListarClientes = channel.unary_unary(
+                '/loja.ClienteService/ListarClientes',
+                request_serializer=produto__pb2.Empty.SerializeToString,
+                response_deserializer=produto__pb2.ListaClientes.FromString,
+                _registered_method=True)
+
+
+class ClienteServiceServicer(object):
+    """==================== SERVIÇO DE CLIENTES ====================
+    """
+
+    def RegistrarCliente(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCliente(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListarClientes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_ClienteServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'RegistrarCliente': grpc.unary_unary_rpc_method_handler(
+                    servicer.RegistrarCliente,
+                    request_deserializer=produto__pb2.Cliente.FromString,
+                    response_serializer=produto__pb2.Cliente.SerializeToString,
+            ),
+            'GetCliente': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCliente,
+                    request_deserializer=produto__pb2.ClienteId.FromString,
+                    response_serializer=produto__pb2.Cliente.SerializeToString,
+            ),
+            'ListarClientes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListarClientes,
+                    request_deserializer=produto__pb2.Empty.FromString,
+                    response_serializer=produto__pb2.ListaClientes.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'loja.ClienteService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('loja.ClienteService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class ClienteService(object):
+    """==================== SERVIÇO DE CLIENTES ====================
+    """
+
+    @staticmethod
+    def RegistrarCliente(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.ClienteService/RegistrarCliente',
+            produto__pb2.Cliente.SerializeToString,
+            produto__pb2.Cliente.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCliente(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.ClienteService/GetCliente',
+            produto__pb2.ClienteId.SerializeToString,
+            produto__pb2.Cliente.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListarClientes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.ClienteService/ListarClientes',
+            produto__pb2.Empty.SerializeToString,
+            produto__pb2.ListaClientes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class PedidoServiceStub(object):
+    """==================== SERVIÇO DE PEDIDOS ====================
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.CriarPedido = channel.unary_unary(
+                '/loja.PedidoService/CriarPedido',
+                request_serializer=produto__pb2.Pedido.SerializeToString,
+                response_deserializer=produto__pb2.Pedido.FromString,
+                _registered_method=True)
+        self.GetPedido = channel.unary_unary(
+                '/loja.PedidoService/GetPedido',
+                request_serializer=produto__pb2.PedidoId.SerializeToString,
+                response_deserializer=produto__pb2.Pedido.FromString,
+                _registered_method=True)
+        self.ListarPedidos = channel.unary_unary(
+                '/loja.PedidoService/ListarPedidos',
+                request_serializer=produto__pb2.ClienteId.SerializeToString,
+                response_deserializer=produto__pb2.ListaPedidos.FromString,
+                _registered_method=True)
+        self.AtualizarStatusPedido = channel.unary_unary(
+                '/loja.PedidoService/AtualizarStatusPedido',
+                request_serializer=produto__pb2.AtualizarStatusRequest.SerializeToString,
+                response_deserializer=produto__pb2.Pedido.FromString,
+                _registered_method=True)
+
+
+class PedidoServiceServicer(object):
+    """==================== SERVIÇO DE PEDIDOS ====================
+    """
+
+    def CriarPedido(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPedido(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListarPedidos(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AtualizarStatusPedido(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_PedidoServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'CriarPedido': grpc.unary_unary_rpc_method_handler(
+                    servicer.CriarPedido,
+                    request_deserializer=produto__pb2.Pedido.FromString,
+                    response_serializer=produto__pb2.Pedido.SerializeToString,
+            ),
+            'GetPedido': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPedido,
+                    request_deserializer=produto__pb2.PedidoId.FromString,
+                    response_serializer=produto__pb2.Pedido.SerializeToString,
+            ),
+            'ListarPedidos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListarPedidos,
+                    request_deserializer=produto__pb2.ClienteId.FromString,
+                    response_serializer=produto__pb2.ListaPedidos.SerializeToString,
+            ),
+            'AtualizarStatusPedido': grpc.unary_unary_rpc_method_handler(
+                    servicer.AtualizarStatusPedido,
+                    request_deserializer=produto__pb2.AtualizarStatusRequest.FromString,
+                    response_serializer=produto__pb2.Pedido.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'loja.PedidoService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('loja.PedidoService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class PedidoService(object):
+    """==================== SERVIÇO DE PEDIDOS ====================
+    """
+
+    @staticmethod
+    def CriarPedido(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.PedidoService/CriarPedido',
+            produto__pb2.Pedido.SerializeToString,
+            produto__pb2.Pedido.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPedido(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.PedidoService/GetPedido',
+            produto__pb2.PedidoId.SerializeToString,
+            produto__pb2.Pedido.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListarPedidos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.PedidoService/ListarPedidos',
+            produto__pb2.ClienteId.SerializeToString,
+            produto__pb2.ListaPedidos.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AtualizarStatusPedido(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/loja.PedidoService/AtualizarStatusPedido',
+            produto__pb2.AtualizarStatusRequest.SerializeToString,
+            produto__pb2.Pedido.FromString,
             options,
             channel_credentials,
             insecure,

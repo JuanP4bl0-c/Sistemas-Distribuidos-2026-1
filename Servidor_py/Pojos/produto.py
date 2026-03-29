@@ -25,3 +25,4 @@ class Produto:
             data['preco'],
             data['estoque']
         )
+

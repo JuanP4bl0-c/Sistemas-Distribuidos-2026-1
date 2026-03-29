@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rproduto.proto\x12\x04loja\"V\n\x07Produto\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04nome\x18\x02 \x01(\t\x12\x11\n\tdescricao\x18\x03 \x01(\t\x12\r\n\x05preco\x18\x04 \x01(\x02\x12\x0f\n\x07\x65stoque\x18\x05 \x01(\x05\"\x17\n\tProdutoId\x12\n\n\x02id\x18\x01 \x01(\x05\"0\n\rListaProdutos\x12\x1f\n\x08produtos\x18\x01 \x03(\x0b\x32\r.loja.Produto\"\x07\n\x05\x45mpty2\xa0\x01\n\x0eProdutoService\x12,\n\nGetProduto\x12\x0f.loja.ProdutoId\x1a\r.loja.Produto\x12\x32\n\x0eListarProdutos\x12\x0b.loja.Empty\x1a\x13.loja.ListaProdutos\x12,\n\x0c\x43riarProduto\x12\r.loja.Produto\x1a\r.loja.Produtob\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rproduto.proto\x12\x04loja\"V\n\x07Produto\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04nome\x18\x02 \x01(\t\x12\x11\n\tdescricao\x18\x03 \x01(\t\x12\r\n\x05preco\x18\x04 \x01(\x02\x12\x0f\n\x07\x65stoque\x18\x05 \x01(\x05\"\x17\n\tProdutoId\x12\n\n\x02id\x18\x01 \x01(\x05\"0\n\rListaProdutos\x12\x1f\n\x08produtos\x18\x01 \x03(\x0b\x32\r.loja.Produto\"9\n\x17\x41tualizarEstoqueRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x12\n\nquantidade\x18\x02 \x01(\x05\"V\n\x07\x43liente\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04nome\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x10\n\x08telefone\x18\x04 \x01(\t\x12\x10\n\x08\x65ndereco\x18\x05 \x01(\t\"\x17\n\tClienteId\x12\n\n\x02id\x18\x01 \x01(\x05\"0\n\rListaClientes\x12\x1f\n\x08\x63lientes\x18\x01 \x03(\x0b\x32\r.loja.Cliente\"]\n\x06Pedido\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x12\n\ncliente_id\x18\x02 \x01(\x05\x12\x14\n\x0cprodutos_ids\x18\x03 \x03(\x05\x12\r\n\x05total\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\"\x16\n\x08PedidoId\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x0cListaPedidos\x12\x1d\n\x07pedidos\x18\x01 \x03(\x0b\x32\x0c.loja.Pedido\"4\n\x16\x41tualizarStatusRequest\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06status\x18\x02 \x01(\t\"\x07\n\x05\x45mpty2\xb4\x01\n\x0eProdutoService\x12,\n\nGetProduto\x12\x0f.loja.ProdutoId\x1a\r.loja.Produto\x12\x32\n\x0eListarProdutos\x12\x0b.loja.Empty\x1a\x13.loja.ListaProdutos\x12@\n\x10\x41tualizarEstoque\x12\x1d.loja.AtualizarEstoqueRequest\x1a\r.loja.Produto2\xa4\x01\n\x0e\x43lienteService\x12\x30\n\x10RegistrarCliente\x12\r.loja.Cliente\x1a\r.loja.Cliente\x12,\n\nGetCliente\x12\x0f.loja.ClienteId\x1a\r.loja.Cliente\x12\x32\n\x0eListarClientes\x12\x0b.loja.Empty\x1a\x13.loja.ListaClientes2\xe0\x01\n\rPedidoService\x12)\n\x0b\x43riarPedido\x12\x0c.loja.Pedido\x1a\x0c.loja.Pedido\x12)\n\tGetPedido\x12\x0e.loja.PedidoId\x1a\x0c.loja.Pedido\x12\x34\n\rListarPedidos\x12\x0f.loja.ClienteId\x1a\x12.loja.ListaPedidos\x12\x43\n\x15\x41tualizarStatusPedido\x12\x1c.loja.AtualizarStatusRequest\x1a\x0c.loja.Pedidob\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,8 +37,28 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_PRODUTOID']._serialized_end=134
   _globals['_LISTAPRODUTOS']._serialized_start=136
   _globals['_LISTAPRODUTOS']._serialized_end=184
-  _globals['_EMPTY']._serialized_start=186
-  _globals['_EMPTY']._serialized_end=193
-  _globals['_PRODUTOSERVICE']._serialized_start=196
-  _globals['_PRODUTOSERVICE']._serialized_end=356
+  _globals['_ATUALIZARESTOQUEREQUEST']._serialized_start=186
+  _globals['_ATUALIZARESTOQUEREQUEST']._serialized_end=243
+  _globals['_CLIENTE']._serialized_start=245
+  _globals['_CLIENTE']._serialized_end=331
+  _globals['_CLIENTEID']._serialized_start=333
+  _globals['_CLIENTEID']._serialized_end=356
+  _globals['_LISTACLIENTES']._serialized_start=358
+  _globals['_LISTACLIENTES']._serialized_end=406
+  _globals['_PEDIDO']._serialized_start=408
+  _globals['_PEDIDO']._serialized_end=501
+  _globals['_PEDIDOID']._serialized_start=503
+  _globals['_PEDIDOID']._serialized_end=525
+  _globals['_LISTAPEDIDOS']._serialized_start=527
+  _globals['_LISTAPEDIDOS']._serialized_end=572
+  _globals['_ATUALIZARSTATUSREQUEST']._serialized_start=574
+  _globals['_ATUALIZARSTATUSREQUEST']._serialized_end=626
+  _globals['_EMPTY']._serialized_start=628
+  _globals['_EMPTY']._serialized_end=635
+  _globals['_PRODUTOSERVICE']._serialized_start=638
+  _globals['_PRODUTOSERVICE']._serialized_end=818
+  _globals['_CLIENTESERVICE']._serialized_start=821
+  _globals['_CLIENTESERVICE']._serialized_end=985
+  _globals['_PEDIDOSERVICE']._serialized_start=988
+  _globals['_PEDIDOSERVICE']._serialized_end=1212
 # @@protoc_insertion_point(module_scope)
