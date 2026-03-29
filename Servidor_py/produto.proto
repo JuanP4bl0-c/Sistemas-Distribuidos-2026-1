@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package loja;
+
+service ProdutoService {
+  rpc GetProduto(ProdutoId) returns (Produto);
+  rpc ListarProdutos(Empty) returns (ListaProdutos);
+  rpc CriarProduto(Produto) returns (Produto);
+}
+
+message Produto {
+  int32 id = 1;
+  string nome = 2;
+  string descricao = 3;
+  float preco = 4;
+  int32 estoque = 5;
+}
+
+message ProdutoId {
+  int32 id = 1;
+}
+
+message ListaProdutos {
+  repeated Produto produtos = 1;
+}
+
+message Empty {}
