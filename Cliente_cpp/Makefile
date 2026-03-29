@@ -1,21 +1,25 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-LDFLAGS = 
+CXXFLAGS = -std=c++17 -Wall -Wextra -g3 -Iinclude
+LDFLAGS =
 
-SRC_DIR = .
+SRC_DIR = src
 OBJ_DIR = obj
-BIN_DIR = .
+OUT_DIR = output
 
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
-TARGET = $(BIN_DIR)/programa
+SOURCES = main.cpp $(wildcard $(SRC_DIR)/*.cpp)
+OBJECTS = $(OBJ_DIR)/main.o $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(wildcard $(SRC_DIR)/*.cpp))
+TARGET = $(OUT_DIR)/main
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(OUT_DIR)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-	@echo "✓ Compilado com sucesso: $@"
+	@echo "Build concluido: $@"
+
+$(OBJ_DIR)/main.o: main.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)
@@ -23,7 +27,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET)
-	@echo "✓ Arquivos de compilação removidos"
+	@echo "Limpeza concluida"
 
 run: $(TARGET)
 	./$(TARGET)

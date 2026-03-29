@@ -1,16 +1,21 @@
+#include <string>
+
 class Produto{
-protected;
+protected:
     int id;
     std::string nome;
     double preco;
 
 public:
-    Produto(int id, std::string nome, double preco){}
+    Produto(int id, std::string nome, double preco);
 
-    virtual ~Produto() {}
+    virtual ~Produto() = default;
 
-    virtual void mostrar(){}
-    int getID() const{}
-    std::string getNome() const{}
-    double getPreco() const{}
+    virtual void mostrar() const;
+    int getId() const;
+    std::string getNome() const;
+    double getPreco() const;
+    void setId(int id);
+    void setNome(const std::string& nome);
+    void setPreco(double preco);
 };
