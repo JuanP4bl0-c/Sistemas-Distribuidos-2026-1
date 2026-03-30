@@ -1,37 +1,38 @@
+# Nome do executável
+TARGET = programa
+
+# Compilador
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -g3 -Iinclude
-LDFLAGS =
 
+# Flags de compilação
+CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
+
+# Diretórios
 SRC_DIR = src
-OBJ_DIR = obj
-OUT_DIR = output
+BUILD_DIR = build
 
-SOURCES = main.cpp $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(OBJ_DIR)/main.o $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(wildcard $(SRC_DIR)/*.cpp))
-TARGET = $(OUT_DIR)/main
+# Arquivos fonte e objetos
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC))
 
+# Regra principal
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	@mkdir -p $(OUT_DIR)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-	@echo "Build concluido: $@"
+# Linkagem
+$(TARGET): $(OBJ)
+	$(CXX) $(OBJ) -o $(TARGET)
 
-$(OBJ_DIR)/main.o: main.cpp
-	@mkdir -p $(OBJ_DIR)
+# Compilação dos .cpp -> .o
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
+# Limpeza
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET)
-	@echo "Limpeza concluida"
+	rm -rf $(BUILD_DIR) $(TARGET)
 
-run: $(TARGET)
+# Executar
+run: all
 	./$(TARGET)
 
-rebuild: clean all
-
-.PHONY: all clean run rebuild
+.PHONY: all clean run
