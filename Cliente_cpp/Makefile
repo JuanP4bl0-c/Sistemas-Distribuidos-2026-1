@@ -1,49 +1,43 @@
-# Nome do executável
-TARGET = cliente
+TARGETS = cliente teste
 
-# Compilador
 CXX = g++
-
-# Flags
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
 
-# Diretórios
-SRC_DIR = src
-BUILD_DIR = build
+SRC_MODEL = $(wildcard src/modelos/*.cpp)
+SRC_STREAMS = $(wildcard src/streams/*.cpp)
+
+OBJ_DIR = obj
 BIN_DIR = bin
 
-# Arquivos fonte
-SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_MODEL = $(patsubst src/modelos/%.cpp,$(OBJ_DIR)/%.o,$(SRC_MODEL))
+OBJ_STREAMS = $(patsubst src/streams/%.cpp,$(OBJ_DIR)/%.o,$(SRC_STREAMS))
 
-# Objetos
-OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC))
+all: $(TARGETS)
 
-# Executável final
-EXEC = $(BIN_DIR)/$(TARGET)
-
-# Regra principal
-all: $(EXEC)
-
-# Linkagem
-$(EXEC): $(OBJ)
+# regra para cliente
+cliente: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/cliente.o
 	@mkdir -p $(BIN_DIR)
-	$(CXX) $(OBJ) -o $(EXEC)
+	$(CXX) $^ -o $(BIN_DIR)/$@
 
-# Compilação
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+# regra para teste
+teste: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/teste.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $^ -o $(BIN_DIR)/$@
+
+# regra genérica para objetos
+$(OBJ_DIR)/%.o: src/modelos/%.cpp
+	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Limpeza
+$(OBJ_DIR)/%.o: src/streams/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: src/app/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-# Executar
-run: all
-	./$(EXEC)
-
-# Debug (extra 🔥)
-debug: CXXFLAGS += -g
-debug: clean all
-
-.PHONY: all clean run debug
+.PHONY: all clean
