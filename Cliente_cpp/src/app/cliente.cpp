@@ -1,47 +1,73 @@
-#include "Produto.h"
+#include "modelos/Produto.h"
 
 #include <iostream>
+#include <vector>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
+
+// 🔹 funções auxiliares (tipo OutputStream)
+void sendInt(int sock, int value) {
+    send(sock, &value, sizeof(int), 0);
+}
+
+void sendFloat(int sock, float value) {
+    send(sock, &value, sizeof(float), 0);
+}
+
+void sendString(int sock, const std::string& str) {
+    int size = str.size();
+    sendInt(sock, size);
+    send(sock, str.c_str(), size, 0);
+}
+
+// 🔹 envia um Produto (equivalente ao OutputStream)
+void writeProduto(int sock, const Produto& p) {
+    sendInt(sock, p.getId());
+    sendString(sock, p.getNome());
+    sendString(sock, p.getDescricao());
+    sendFloat(sock, p.getPreco());
+    sendInt(sock, p.getQuantidadeEstoque());
+}
+
+// 🔹 envia lista de Produtos (EXIGIDO no trabalho)
+void sendProdutos(int sock, const std::vector<Produto>& lista) {
+    int qtd = lista.size();
+    sendInt(sock, qtd);
+
+    for (const auto& p : lista) {
+        writeProduto(sock, p);
+    }
+}
+
 int main() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (sock < 0) {
+        std::cerr << "Erro ao criar socket\n";
+        return 1;
+    }
 
     sockaddr_in server;
     server.sin_family = AF_INET;
     server.sin_port = htons(5000);
     server.sin_addr.s_addr = inet_addr("192.168.0.6");
 
-    connect(sock, (sockaddr*)&server, sizeof(server));
+    if (connect(sock, (sockaddr*)&server, sizeof(server)) < 0) {
+        std::cerr << "Erro ao conectar\n";
+        return 1;
+    }
 
-    Produto p(1, "Carregador", "Carregador para smartphone", 79.90, 50 );
+    // 🔹 criando lista de produtos (array)
+    std::vector<Produto> lista = {
+        Produto(1, "Carregador", "USB-C", 79.90, 50),
+        Produto(2, "Capa", "Silicone", 29.90, 30)
+    };
 
-    // 🔹 serialização
-    int id = p.getId();
-    int tamanho = p.getNome().size();
-    int descricao_tamanho = p.getDescricao().size();
-    int quantidade_estoque = p.getQuantidadeEstoque();
-    float preco = p.getPreco();
+    // 🔹 envia tudo (igual OutputStream)
+    sendProdutos(sock, lista);
 
-    // envia id
-    send(sock, &id, sizeof(int), 0);
-
-    // envia tamanho do nome
-    send(sock, &tamanho, sizeof(int), 0);
-
-    // envia nome
-    send(sock, p.getNome().c_str(), tamanho, 0);
-
-    //envia tamanho da descrição
-    send(sock, &descricao_tamanho, sizeof(int), 0);
-    // envia descrição
-    send(sock, p.getDescricao().c_str(), descricao_tamanho, 0);
-
-    // envia preco
-    send(sock, &preco, sizeof(float), 0);
-
-    // envia quantidade em estoque
-    send(sock, &quantidade_estoque, sizeof(int), 0);
+    std::cout << "Dados enviados com sucesso!\n";
 
     close(sock);
     return 0;
