@@ -1,38 +1,49 @@
 # Nome do executável
-TARGET = programa
+TARGET = cliente
 
 # Compilador
 CXX = g++
 
-# Flags de compilação
+# Flags
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
 
 # Diretórios
 SRC_DIR = src
 BUILD_DIR = build
+BIN_DIR = bin
 
-# Arquivos fonte e objetos
+# Arquivos fonte
 SRC = $(wildcard $(SRC_DIR)/*.cpp)
+
+# Objetos
 OBJ = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC))
 
+# Executável final
+EXEC = $(BIN_DIR)/$(TARGET)
+
 # Regra principal
-all: $(TARGET)
+all: $(EXEC)
 
 # Linkagem
-$(TARGET): $(OBJ)
-	$(CXX) $(OBJ) -o $(TARGET)
+$(EXEC): $(OBJ)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(OBJ) -o $(EXEC)
 
-# Compilação dos .cpp -> .o
+# Compilação
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Limpeza
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
 # Executar
 run: all
-	./$(TARGET)
+	./$(EXEC)
 
-.PHONY: all clean run
+# Debug (extra 🔥)
+debug: CXXFLAGS += -g
+debug: clean all
+
+.PHONY: all clean run debug

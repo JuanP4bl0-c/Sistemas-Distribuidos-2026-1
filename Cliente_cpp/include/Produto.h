@@ -4,18 +4,24 @@ class Produto{
 protected:
     int id;
     std::string nome;
-    double preco;
+    std::string descricao;
+    float preco;
+    int quantidade_estoque;
 
 public:
-    Produto(int id, std::string nome, double preco);
+    Produto(int id, std::string nome, std::string descricao, float preco, int quantidade_estoque);
 
     virtual ~Produto() = default;
 
     virtual void mostrar() const;
     int getId() const;
     std::string getNome() const;
-    double getPreco() const;
+    std::string getDescricao() const;
+    float getPreco() const;
+    int getQuantidadeEstoque() const;
     void setId(int id);
     void setNome(const std::string& nome);
-    void setPreco(double preco);
+    void setDescricao(const std::string& descricao);
+    void setPreco(float preco);
+    void setQuantidadeEstoque(int quantidade_estoque);
 };

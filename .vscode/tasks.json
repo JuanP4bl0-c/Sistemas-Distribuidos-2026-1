@@ -2,22 +2,19 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Build Cliente C++",
+			"label": "build cliente",
 			"type": "shell",
 			"command": "make",
 			"args": [
-				"all"
-			],
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"options": {
-				"cwd": "${workspaceFolder}/Cliente_cpp"
-			}
+				"-Wall",
+				"-Wextra",
+				"-g3",
+				"src/cliente.cpp",
+				"src/Produto.cpp",
+				"-Iinclude",
+				"-o",
+				"bin/cliente"
+			]
 		}
 	]
 }
