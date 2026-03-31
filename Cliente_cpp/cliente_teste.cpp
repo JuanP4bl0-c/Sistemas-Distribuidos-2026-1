@@ -16,7 +16,7 @@ private:
     int porta;
 
 public:
-    ClienteProduto(const char* h = "127.0.0.1", int p = 5000):socket_fd(-1), host(h), porta(p) {}  // Ordem corrigida!
+    ClienteProduto(const char* h = "0.0.0.0", int p = 5001):socket_fd(-1), host(h), porta(p) {}  // Ordem corrigida!
 
     bool conectar() {
         // Criar socket

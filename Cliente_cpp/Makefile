@@ -1,32 +1,45 @@
+TARGETS = cliente teste
+
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
-LDFLAGS = 
+CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -Iinclude/modelos -Iinclude/streams
 
-# Arquivos fonte
-SOURCES	=	cliente_teste.cpp
-EXECUTABLE	=	cliente_tcp
+SRC_MODEL = $(wildcard src/modelos/*.cpp)
+SRC_STREAMS = $(wildcard src/streams/*.cpp)
 
-# Alvo padrão
-all:	$(EXECUTABLE)
+INC_MODEL = $(patsubst src/modelos/%.cpp,include/modelos/%.h,$(SRC_MODEL))
 
-# Compilar
-$(EXECUTABLE): $(SOURCES)
-	$(CXX)	$(CXXFLAGS) -o $(EXECUTABLE) $(SOURCES) $(LDFLAGS)
+OBJ_DIR = obj
+BIN_DIR = bin
 
-# Executar
-run: $(EXECUTABLE)
-	./$(EXECUTABLE)
+OBJ_MODEL = $(patsubst src/modelos/%.cpp,$(OBJ_DIR)/%.o,$(SRC_MODEL))
+OBJ_STREAMS = $(patsubst src/streams/%.cpp,$(OBJ_DIR)/%.o,$(SRC_STREAMS))
 
-# Limpar
+all: $(TARGETS)
+
+# regra para cliente
+cliente: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/cliente.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $^ -o $(BIN_DIR)/$@
+
+# regra para teste
+teste: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/teste.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $^ -o $(BIN_DIR)/$@
+
+# regra genérica para objetos
+$(OBJ_DIR)/%.o: src/modelos/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: src/streams/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: src/app/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
-	rm -f $(EXECUTABLE) *.o
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-# Help
-help:
-	@echo "Comandos disponíveis:"
-	@echo "  make          - Compila o projeto"
-	@echo "  make run      - Compila e executa"
-	@echo "  make clean    - Remove arquivos compilados"
-	@echo "  make help     - Mostra esta mensagem"
-	
-.PHONY: all run clean help
+.PHONY: all clean
