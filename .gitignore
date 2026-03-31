@@ -39,7 +39,11 @@ wheels/
 .env
 .DS_Store
 
+
+*.class
+
 important.py
+config.properties
 # Arquivos gRPC gerados (opcional - descomente se quiser ignorar)
 # produto_pb2.py
 # produto_pb2_grpc.py

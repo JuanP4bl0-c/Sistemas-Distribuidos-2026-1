@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <ostream>
-#include "Produto.h"
+#include "modelos/Produto.h"
 
 class ProdutoOutputStream {
 private:

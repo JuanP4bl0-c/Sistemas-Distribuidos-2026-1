@@ -17,7 +17,7 @@ std::string Produto::getNome() const {
     return nome;
 }
 std::string Produto::getDescricao() const {
-    return this->descricao;
+    return descricao;
 }
 float Produto::getPreco() const {
     return preco;

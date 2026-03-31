@@ -1,3 +1,6 @@
+#ifndef PRODUTO_H
+#define PRODUTO_H
+
 #include <string>
 
 class Produto{
@@ -25,3 +28,5 @@ public:
     void setPreco(float preco);
     void setQuantidadeEstoque(int quantidade_estoque);
 };
+
+#endif // PRODUTO_H

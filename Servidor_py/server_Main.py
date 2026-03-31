@@ -58,7 +58,6 @@ def processar_requisicao(dados):
     except Exception as e:
         return json.dumps({"status": "erro", "mensagem": f"Erro ao processar requisição: {str(e)}"})
 
-
 def gerenciar_conexao(conexao, endereco):
     print("Cliente conectado")
     try:

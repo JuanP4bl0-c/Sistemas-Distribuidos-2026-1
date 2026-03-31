@@ -1,3 +1,6 @@
+#ifndef CELULAR_H
+#define CELULAR_H
+
 #include <string>
 #include "Produto.h"
 
@@ -14,3 +17,5 @@ public:
     void setModelo(const std::string& modelo);
     void mostrar() const override;
 };
+
+#endif // CELULAR_H

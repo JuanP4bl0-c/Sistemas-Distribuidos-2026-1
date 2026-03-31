@@ -1,12 +1,10 @@
 TARGETS = cliente teste
 
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude -Iinclude/modelos -Iinclude/streams
+CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
 
 SRC_MODEL = $(wildcard src/modelos/*.cpp)
 SRC_STREAMS = $(wildcard src/streams/*.cpp)
-
-INC_MODEL = $(patsubst src/modelos/%.cpp,include/modelos/%.h,$(SRC_MODEL))
 
 OBJ_DIR = obj
 BIN_DIR = bin
