@@ -1,0 +1,30 @@
+# 🔹 Diretórios de build
+build/
+bin/
+
+# 🔹 Arquivos compilados
+*.o
+*.out
+*.exe
+
+# 🔹 Dependências e libs
+*.a
+*.so
+*.dll
+
+# 🔹 Arquivos temporários
+*.log
+*.tmp
+*.swp
+*~
+
+# 🔹 Arquivos de IDEs
+.vscode/
+.idea/
+
+# 🔹 Sistema
+.DS_Store
+Thumbs.db
+
+# 🔹 Arquivos de debug
+*.dSYM/

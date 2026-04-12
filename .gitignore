@@ -1,0 +1,49 @@
+# Ambiente virtual Python
+.venv/
+venv/
+ENV/
+env/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Arquivos de distribuição
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ambiente
+.env
+.DS_Store
+
+
+*.class
+
+important.py
+config.properties
+# Arquivos gRPC gerados (opcional - descomente se quiser ignorar)
+# produto_pb2.py
+# produto_pb2_grpc.py
