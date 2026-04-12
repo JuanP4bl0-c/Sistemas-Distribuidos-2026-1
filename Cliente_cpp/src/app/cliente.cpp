@@ -30,6 +30,10 @@ void sendFloat(int sock, float value) {
     send(sock, &value, sizeof(float), 0);
 }
 
+void sendDouble(int sock, double value) {
+    send(sock, &value, sizeof(double), 0);
+}
+
 void sendString(int sock, const std::string& str) {
     int size = str.size();
     sendInt(sock, size);
@@ -41,7 +45,7 @@ void writeProduto(int sock, const Produto& p) {
     sendInt(sock, p.getId());
     sendString(sock, p.getNome());
     sendString(sock, p.getDescricao());
-    sendFloat(sock, p.getPreco());
+    sendDouble(sock, p.getPreco());
     sendInt(sock, p.getQuantidadeEstoque());
 }
 

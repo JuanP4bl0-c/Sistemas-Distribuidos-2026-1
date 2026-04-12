@@ -1,4 +1,4 @@
-TARGETS = cliente teste
+TARGETS = cliente teste menu_ADM
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
@@ -21,6 +21,10 @@ cliente: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/cliente.o
 
 # regra para teste
 teste: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/teste.o
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $^ -o $(BIN_DIR)/$@
+
+menu_ADM: $(OBJ_MODEL) $(OBJ_STREAMS) $(OBJ_DIR)/menu_ADM.o
 	@mkdir -p $(BIN_DIR)
 	$(CXX) $^ -o $(BIN_DIR)/$@
 

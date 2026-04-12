@@ -51,6 +51,10 @@ Cliente_cpp/out/
 Cliente_cpp/build/
 Cliente_cpp/output/
 
+.vscode/
+
+catalogo.bin
+catalogo.csv
 # Arquivos gRPC gerados (opcional - descomente se quiser ignorar)
 # produto_pb2.py
 # produto_pb2_grpc.py

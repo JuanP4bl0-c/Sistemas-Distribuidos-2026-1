@@ -13,7 +13,7 @@ void ProdutoOutputStream::write() {
         int id = p.getId();
         int tam_nome = p.getNome().size();
         int tam_desc = p.getDescricao().size();
-        float preco = p.getPreco();
+        double preco = p.getPreco();
         int estoque = p.getQuantidadeEstoque();
 
         // id
@@ -28,7 +28,7 @@ void ProdutoOutputStream::write() {
         out.write(p.getDescricao().c_str(), tam_desc);
 
         // preco
-        out.write((char*)&preco, sizeof(float));
+        out.write((char*)&preco, sizeof(double));
 
         // estoque
         out.write((char*)&estoque, sizeof(int));
