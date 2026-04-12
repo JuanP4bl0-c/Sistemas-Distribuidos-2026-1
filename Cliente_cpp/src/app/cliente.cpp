@@ -1,5 +1,6 @@
 #include "modelos/Produto.h"
 #include "streams/ProdutoOutPutStream.h"
+#include "streams/ProdutoInPutStream.h"
 
 #include <iostream>
 #include <vector>
@@ -54,6 +55,16 @@ void sendProdutos(int sock, const std::vector<Produto>& lista) {
     }
 }
 
+bool recvAll(int sock, char* buffer, size_t size) {
+    size_t total = 0;
+    while (total < size) {
+        ssize_t received = recv(sock, buffer + total, size - total, 0);
+        if (received <= 0) return false;
+        total += received;
+    }
+    return true;
+}
+
 int main() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -88,6 +99,45 @@ int main() {
     sendAll(sock, data.data(), data.size());
 
     std::cout << "Pacote enviado com sucesso!\n";
+
+    std::cout << "Aguardando resposta do servidor...\n";
+
+    // Lê quantidade em LITTLE_ENDIAN
+    int qtd_recebida = 0;
+    char qtd_buffer[4];
+    recvAll(sock, qtd_buffer, sizeof(int));
+    qtd_recebida = *(int*)qtd_buffer;  // LE nativo
+    
+    std::cout << "O servidor me enviou " << qtd_recebida << " produtos do catalogo atualizado!\n";
+
+    for (int i = 0; i < qtd_recebida; i++) {
+        char id_buffer[4], len_buffer[4], preco_buffer[8];
+        
+        // Lê ID em LITTLE_ENDIAN
+        recvAll(sock, id_buffer, sizeof(int));
+        int id = *(int*)id_buffer;
+        
+        // Lê nome (tamanho em LITTLE_ENDIAN + string)
+        recvAll(sock, len_buffer, sizeof(int));
+        int nome_len = *(int*)len_buffer;
+        char nome_buffer[256];
+        recvAll(sock, nome_buffer, nome_len);
+        std::string nome(nome_buffer, nome_len);
+        
+        // Lê descrição (tamanho em LITTLE_ENDIAN + string)
+        recvAll(sock, len_buffer, sizeof(int));
+        int desc_len = *(int*)len_buffer;
+        char desc_buffer[256];
+        recvAll(sock, desc_buffer, desc_len);
+        std::string descricao(desc_buffer, desc_len);
+        
+        // Lê preço em LITTLE_ENDIAN (8 bytes double)
+        recvAll(sock, preco_buffer, sizeof(double));
+        double preco = *(double*)preco_buffer;
+        
+        std::cout << "  Produto " << (i+1) << ": " << nome << " - R$ " << preco << "\n";
+    }
+
 
     close(sock);
     return 0;
