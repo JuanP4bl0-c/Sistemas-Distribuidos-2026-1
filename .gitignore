@@ -44,6 +44,13 @@ wheels/
 
 important.py
 config.properties
+
+Cliente_cpp/bin/
+Cliente_cpp/obj/
+Cliente_cpp/out/
+Cliente_cpp/build/
+Cliente_cpp/output/
+
 # Arquivos gRPC gerados (opcional - descomente se quiser ignorar)
 # produto_pb2.py
 # produto_pb2_grpc.py
