@@ -12,7 +12,7 @@ import Servidor_java.Servicos.CatalogoCelular;
 
 import Servidor_java.Stream.*;
 
-public class Request {
+public class RequestReply {
 
     public static final int OP_LISTAR = 1;           
     public static final int OP_ADICIONAR = 2;        
@@ -24,7 +24,7 @@ public class Request {
     private InputStream entrada;
     private OutputStream saida;
 
-    public Request(InputStream entrada, OutputStream saida) {
+    public RequestReply(InputStream entrada, OutputStream saida) {
         this.entrada = entrada;
         this.saida = saida;
     }

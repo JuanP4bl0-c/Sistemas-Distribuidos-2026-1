@@ -2,19 +2,15 @@ package Servidor_java;
 
 import java.net.*;
 import java.io.*;
-import java.nio.*;
 
 import java.util.Properties;
 
 import Servidor_java.Modelos.Celular;
 
 import Servidor_java.Servicos.CatalogoCelular;
-import Servidor_java.Servicos.GestorVendas;
+// import Servidor_java.Servicos.GestorVendas;
 
-import Servidor_java.Stream.PojoInputstream;
-import Servidor_java.Stream.PojoOutputStream;
-
-import Servidor_java.Serializacao.Request;
+import Servidor_java.Serializacao.RequestReply;
 
 import Servidor_java.Utils.FileOutputStream_catalogo;
 
@@ -52,7 +48,7 @@ public class Servidor {
                     while (conexaoAtiva) {
                         try {
                             
-                            Request requisicao = new Request(cliente.getInputStream(), cliente.getOutputStream());
+                            RequestReply requisicao = new RequestReply(cliente.getInputStream(), cliente.getOutputStream());
                             int operacao = requisicao.obterOperacao();
                             
                             if (operacao == -1) {break;}
