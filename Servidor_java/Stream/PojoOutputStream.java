@@ -4,18 +4,18 @@ import java.io.*;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
 
-import Servidor_java.Modelos.Celular;
+import Servidor_java.Modelos.Produto;
 
 public class PojoOutputStream extends FilterOutputStream {
     
     
-    private Celular[] produtos;
+    private Produto[] produtos;
     private int qtd_produtos;
     
     
     
     // Construtor exigido pela Questão 2, item 'a'
-    public PojoOutputStream(Celular[] produtos,int qtd_produtos, OutputStream out) {
+    public PojoOutputStream(Produto[] produtos,int qtd_produtos, OutputStream out) {
         super(out);
         this.produtos = produtos;
         this.qtd_produtos = qtd_produtos;
@@ -44,7 +44,7 @@ public class PojoOutputStream extends FilterOutputStream {
         escreverInt(qtd_produtos);
 
         for (int i = 0; i < qtd_produtos; i++) {
-            Celular c = produtos[i];
+            Produto c = produtos[i];
             
             // O trabalho pede PELO MENOS 3 atributos. Vamos enviar 4:
             escreverInt(c.getId());

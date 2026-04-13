@@ -4,8 +4,9 @@ import java.io.*;
 import java.nio.*;
 
 import Servidor_java.Modelos.Celular;
+import Servidor_java.Modelos.Produto;
 
-import Servidor_java.Servicos.CatalogoCelular;
+import Servidor_java.Servicos.CatalogoProdutos;
 
 import Servidor_java.Stream.PojoInputstream;
 import Servidor_java.Stream.PojoOutputStream;
@@ -16,10 +17,10 @@ public class FileOutputStream_catalogo {
     private static final String Catalogo_CSV = "Servidor_java/catalogo.csv";
 
 
-    public static void salvarCatalogo(CatalogoCelular catalogo) {
+    public static void salvarCatalogo(CatalogoProdutos catalogo) {
         try (FileOutputStream fos = new FileOutputStream(Catalogo_file)) {
             var lista = catalogo.getTodos();
-            Celular[] array = lista.toArray(new Celular[0]);
+            Produto[] array = lista.toArray(new Produto[0]);
             
             PojoOutputStream pos = new PojoOutputStream(array, array.length, fos);
             pos.enviarDados();
@@ -30,7 +31,7 @@ public class FileOutputStream_catalogo {
         }
     }
 
-    public static void carregarCatalogo(CatalogoCelular catalogo) {
+    public static void carregarCatalogo(CatalogoProdutos catalogo) {
         File arquivo = new File(Catalogo_file);
         
         if (!arquivo.exists()) {
@@ -51,7 +52,7 @@ public class FileOutputStream_catalogo {
             
             for (int i = 0; i < quantidade; i++) {
                 Celular c = pis.lerCelular_LE();
-                catalogo.adicionarCelular(c);
+                catalogo.AdicionarProduto(c);
                 System.out.println("  Carregado: " + c.getNome());
             }
             
@@ -60,13 +61,14 @@ public class FileOutputStream_catalogo {
         }
     }
 
-    public static void salvarCatalogoCsv(CatalogoCelular catalogo) {
+    public static void salvarCatalogoCsv(CatalogoProdutos catalogo) {
         try (FileWriter fw = new FileWriter(Catalogo_CSV)) {
             // Cabeçalho
             fw.write("ID,Nome,Descricao,Preco,Estoque,Marca,Modelo\n");
             
             // Dados
-            for (Celular c : catalogo.getTodos()) {
+            for (Produto p : catalogo.getTodos()) {
+                Celular c = (Celular) p;
                 fw.write(c.getId() + "," +
                         c.getNome() + "," +
                         c.getDescricao() + "," +

@@ -21,7 +21,7 @@ public class Pelicula extends Produto{
     public void setMaterial(String material){this.material = material;}
 
     public String toString() {
-        return "Capinha [id=" + getId() + ", nome=" + getNome() + ", preco=" + getPreco() + ", estoque=" + getEstoque() + "modelo="+ modelo + "material="+ material +"]";
+        return "Pelicula [id=" + getId() + ", nome=" + getNome() + ", preco=" + getPreco() + ", estoque=" + getEstoque() + "modelo="+ modelo + "material="+ material +"]";
     }
 
 

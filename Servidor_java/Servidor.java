@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.Properties;
 
 import Servidor_java.Modelos.Celular;
-
-import Servidor_java.Servicos.CatalogoCelular;
+import Servidor_java.Modelos.PowerBank;
+import Servidor_java.Servicos.CatalogoProdutos;
 // import Servidor_java.Servicos.GestorVendas;
 
 import Servidor_java.Serializacao.RequestReply;
@@ -18,9 +18,11 @@ public class Servidor {
 
     public static void main(String args[]){
         
-        CatalogoCelular catalogo_celular = new CatalogoCelular();
-        catalogo_celular.adicionarCelular(new Celular(1,"IPhone 15","Apple celular",5000.0,5,"Apple","15 Pro"));
-        catalogo_celular.adicionarCelular(new Celular(2,"Poco 11","Celular xiaomi poco 11",5000.0,5,"Xiaomi","poco 11"));
+        CatalogoProdutos catalogo_Geral = new CatalogoProdutos();
+
+        catalogo_Geral.AdicionarProduto(new Celular(1,"IPhone 15","Apple celular",5000.0,5,"Apple","15 Pro"));
+        catalogo_Geral.AdicionarProduto(new Celular(2,"Poco 11","Celular xiaomi poco 11",5000.0,5,"Xiaomi","poco 11"));
+        catalogo_Geral.AdicionarProduto(new PowerBank(3,"Power Bank","Bateria Retangular",200.0,10,"Xiaomi","10000mAh",1000));
     
         ServerSocket server = null;
 
@@ -53,10 +55,10 @@ public class Servidor {
                             
                             if (operacao == -1) {break;}
                             
-                            requisicao.processarRequisicao(catalogo_celular, operacao);
+                            requisicao.processarRequisicao(catalogo_Geral, operacao);
 
-                            FileOutputStream_catalogo.salvarCatalogo(catalogo_celular);
-                            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_celular);
+                            FileOutputStream_catalogo.salvarCatalogo(catalogo_Geral);
+                            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_Geral);
                         
                         } catch (IOException e) {
                             conexaoAtiva = false;

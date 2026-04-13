@@ -7,9 +7,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import Servidor_java.Servicos.CatalogoProdutos;
 import Servidor_java.Modelos.Celular;
-import Servidor_java.Servicos.CatalogoCelular;
-
+import Servidor_java.Modelos.Produto;
 import Servidor_java.Stream.*;
 
 public class RequestReply {
@@ -49,7 +49,7 @@ public class RequestReply {
     }
 
 
-    public void processarRequisicao(CatalogoCelular catalogo, int operacao) throws IOException {
+    public void processarRequisicao(CatalogoProdutos catalogo, int operacao) throws IOException {
         System.out.println("Operação recebida: " + operacao);
         
         switch(operacao) {
@@ -68,7 +68,7 @@ public class RequestReply {
             case OP_REMOVER:
                 System.out.println("REMOVER - Removendo produto");
                 enviarResposta(RESP_OK);
-                removerCelular(catalogo);
+                RemoverProduto(catalogo);
                 break;
                 
             default:
@@ -78,9 +78,9 @@ public class RequestReply {
     }
 
 
-    private void listarCatalogo(CatalogoCelular catalogo) throws IOException {
+    private void listarCatalogo(CatalogoProdutos catalogo) throws IOException {
         var lista = catalogo.getTodos();
-        Celular[] array = lista.toArray(new Celular[0]);
+        Produto[] array = lista.toArray(new Produto[0]);
         
         PojoOutputStream pos = new PojoOutputStream(array, array.length, saida);
         pos.enviarDados();
@@ -89,7 +89,7 @@ public class RequestReply {
 
     
     
-    private void adicionarProdutos(CatalogoCelular catalogo) throws IOException {
+    private void adicionarProdutos(CatalogoProdutos catalogo) throws IOException {
         // Lê tamanho do pacote
         byte[] tam_buffer = new byte[4];
         entrada.read(tam_buffer);
@@ -107,19 +107,19 @@ public class RequestReply {
         
         for(int i = 0; i < qtd; i++) {
             Celular c = pis.lerCelular_LE();
-            catalogo.adicionarCelular(c);
+            catalogo.AdicionarProduto(c);
             System.out.println("  Adicionado: " + c.getNome());
         }
     }
     
-    private void removerCelular(CatalogoCelular catalogo) throws IOException {
+    private void RemoverProduto(CatalogoProdutos catalogo) throws IOException {
         byte[] id_buffer = new byte[4];
         entrada.read(id_buffer);
         int id = ByteBuffer.wrap(id_buffer)
             .order(ByteOrder.LITTLE_ENDIAN)
             .getInt();
         
-        catalogo.removerCelular(id);  // ✅ Agora remove de verdade
+        catalogo.RemoverProduto(id);
         System.out.println("  Removido: ID " + id);
     }
     
