@@ -23,22 +23,10 @@ public class Servidor {
     public static void main(String args[]){
         
         CatalogoCelular catalogo_celular = new CatalogoCelular();
-        FileOutputStream_catalogo.carregarCatalogo(catalogo_celular);
-
-        if (catalogo_celular.getTodos().isEmpty()) {
-            catalogo_celular.adicionarCelular(new Celular(1,"IPhone 15","Apple celular",5000.0,5,"Apple","15 Pro"));
-            catalogo_celular.adicionarCelular(new Celular(2,"Poco 11","Celular xiaomi poco 11",5000.0,5,"Xiaomi","poco 11"));
-        }
-        
+        catalogo_celular.adicionarCelular(new Celular(1,"IPhone 15","Apple celular",5000.0,5,"Apple","15 Pro"));
+        catalogo_celular.adicionarCelular(new Celular(2,"Poco 11","Celular xiaomi poco 11",5000.0,5,"Xiaomi","poco 11"));
+    
         ServerSocket server = null;
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("\n>>> Salvando catálogo antes de encerrar...");
-            FileOutputStream_catalogo.salvarCatalogo(catalogo_celular);
-            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_celular);
-            System.out.println(">>> Catálogo salvo com sucesso!");
-        }));
-
 
         try {
             
@@ -67,9 +55,7 @@ public class Servidor {
                             Request requisicao = new Request(cliente.getInputStream(), cliente.getOutputStream());
                             int operacao = requisicao.obterOperacao();
                             
-                            if (operacao == -1) {  // Cliente desconectou
-                                break;
-                            }
+                            if (operacao == -1) {break;}
                             
                             requisicao.processarRequisicao(catalogo_celular, operacao);
 
