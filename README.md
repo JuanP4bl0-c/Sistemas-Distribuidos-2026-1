@@ -6,7 +6,9 @@ Praticas e Trabalho em dupla feito com C++ como cliente e Java como servidor.
 Projeto com o assunto: Empresa de Venda de Aparelhos Telefônicos
 
 ### Contem:
-    Feito Pojo,Modelos e Serviços em um servidor em TCP
-    Inputstring para o servidor
-    Outputstring para o cliente
+    
+Feito Pojo,Modelos e Serviços em um servidor em TCP
+Inputstring para o servidor
+Outputstring para o cliente
 
+O Celular foi o Pojo escolhido para ser trabalhado com as streams

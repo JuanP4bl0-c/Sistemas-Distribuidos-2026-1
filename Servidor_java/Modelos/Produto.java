@@ -1,8 +1,5 @@
 package Servidor_java.Modelos;
 
-import java.io.Serializable;
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class Produto {
 

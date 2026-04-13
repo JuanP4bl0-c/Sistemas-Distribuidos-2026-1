@@ -28,6 +28,10 @@ public class CatalogoCelular {
         return null; // Caso não encontre
     }
 
+    public void removerCelular(int id) {
+        getTodos().removeIf(c -> c.getId() == id);
+    }
+
     public List<Celular> getTodos() {
         return listaDeCelulares;
     }

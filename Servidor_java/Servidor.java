@@ -14,6 +14,8 @@ import Servidor_java.Servicos.GestorVendas;
 import Servidor_java.Stream.PojoInputstream;
 import Servidor_java.Stream.PojoOutputStream;
 
+import Servidor_java.Serializacao.Request;
+
 import Servidor_java.Utils.FileOutputStream_catalogo;
 
 public class Servidor {
@@ -30,6 +32,13 @@ public class Servidor {
         
         ServerSocket server = null;
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\n>>> Salvando catálogo antes de encerrar...");
+            FileOutputStream_catalogo.salvarCatalogo(catalogo_celular);
+            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_celular);
+            System.out.println(">>> Catálogo salvo com sucesso!");
+        }));
+
 
         try {
             
@@ -42,8 +51,6 @@ public class Servidor {
 
             
             server = new ServerSocket(porta);
-            PojoOutputStream saida;
-            
 
             for(;;){
                 
@@ -53,47 +60,29 @@ public class Servidor {
                     Socket cliente = server.accept();
                     System.out.println("Cliente conectado: " + server.getInetAddress());
                     
-                    
-                    //iniciando serialização
-                    InputStream entrada = cliente.getInputStream();
-                    PojoInputstream pojo_stream;
-                    
-                    byte[] buffer = new byte[4];
-                    entrada.read(buffer);
-                
-                    int tamanho_pacote = ByteBuffer.wrap(buffer).order(ByteOrder.BIG_ENDIAN).getInt();
-                    System.out.println("Tamanho do pacote recebido: " + tamanho_pacote + " bytes");
-                
-                    byte[] data_buffer = new byte[tamanho_pacote];
-                    entrada.read(data_buffer);
-                    
-                    
-                    pojo_stream = new PojoInputstream(new ByteArrayInputStream(data_buffer));
-                    int quantidade_produtos = pojo_stream.lerInt_LE();
-                    
-                    System.out.println("Recebido " + quantidade_produtos + " Produtos");
-                    
-                    for(int i=0; i < quantidade_produtos; i++){
-                        Celular c = pojo_stream.lerCelular_LE();
-                        catalogo_celular.adicionarCelular(c);
+                    boolean conexaoAtiva = true;
+                    while (conexaoAtiva) {
+                        try {
+                            
+                            Request requisicao = new Request(cliente.getInputStream(), cliente.getOutputStream());
+                            int operacao = requisicao.obterOperacao();
+                            
+                            if (operacao == -1) {  // Cliente desconectou
+                                break;
+                            }
+                            
+                            requisicao.processarRequisicao(catalogo_celular, operacao);
 
-                        //Teste de implementação por saida padrao
-                        System.out.println("Item " + (i+1) + " adicionado  no catalogo: " + c.getNome() + " - " + c.getDescricao() + " - " + c.getPreco() + " - " + c.getMarca() + " - " + c.getModelo());
-                    }
-                    
-                
-                    var listaCelulares = catalogo_celular.getTodos();
-                    Celular[] arrayCelulares = listaCelulares.toArray(new Celular[0]);
+                            FileOutputStream_catalogo.salvarCatalogo(catalogo_celular);
+                            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_celular);
                         
-                    saida = new PojoOutputStream(arrayCelulares,arrayCelulares.length, cliente.getOutputStream());
-                    saida.enviarDados();
-                    saida.close();
-                    
+                        } catch (IOException e) {
+                            conexaoAtiva = false;
+                            System.out.println("Cliente desconectado: " + e.getMessage());
 
-                    FileOutputStream_catalogo.salvarCatalogo(catalogo_celular);
-                    FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_celular);
-
-                    
+                        }
+                    }
+                   
                     System.out.println("Conexão encerrada pelo cliente.");            
                     cliente.close();
 

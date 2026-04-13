@@ -29,12 +29,6 @@ public class PojoInputstream extends FilterInputStream{
         return ByteBuffer.wrap(buffer).order(ByteOrder.BIG_ENDIAN).getFloat();
     }
 
-    private float lerFloat_LE() throws IOException {
-        byte[] buffer = new byte[4];
-        read(buffer);
-        return ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-    }
-
     private double lerDouble_LE() throws IOException {
         byte[] buffer = new byte[8];
         read(buffer);
