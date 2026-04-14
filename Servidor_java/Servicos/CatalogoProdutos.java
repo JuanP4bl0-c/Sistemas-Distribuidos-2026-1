@@ -64,7 +64,7 @@ public class CatalogoProdutos {
         pos.enviarDados();
     }
 
-    public void AdicionarProdutos_Stream(InputStream entrada, OutputStream saida) throws IOException {
+    public void AdicionarProdutos_Stream_old(InputStream entrada, OutputStream saida) throws IOException {
         // Lê tamanho do pacote
         byte[] tam_buffer = new byte[4];
         entrada.read(tam_buffer);
@@ -88,6 +88,28 @@ public class CatalogoProdutos {
         }
         
     }
+
+    public void AdicionarProdutos_Stream(InputStream in, OutputStream out) {
+        try {
+            PojoInputStream pis = new PojoInputStream(in);
+            
+            // ==== A LINHA MÁGICA QUE FALTAVA ====
+            // Lê a quantidade de produtos que o C++ enviou primeiro!
+            int quantidade = pis.lerInt(); 
+            // ====================================
+
+            // Agora sim, fazemos o loop baseado nessa quantidade
+            for (int i = 0; i < quantidade; i++) {
+                Produto p = pis.lerProduto();
+                AdicionarProduto(p); // Ou a lógica que você usa para salvar
+                System.out.println("Produto recebido via rede: " + p.getNome());
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erro ao ler produtos do stream: " + e.getMessage());
+        }
+    }
+
     
     public void RemoverProduto_Stream(InputStream entrada, OutputStream saida) throws IOException {
         byte[] id_buffer = new byte[4];

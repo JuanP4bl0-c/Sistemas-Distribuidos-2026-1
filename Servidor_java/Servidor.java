@@ -67,20 +67,20 @@ public class Servidor {
                                 switch(operacao) {
                                     case 1:  // LISTAR
                                         System.out.println("LISTAR - Enviando catálogo");
-                                        pos.enviarResposta(200);
                                         catalogo_Geral.listarCatalogo_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        pos.enviarResposta(200);
                                         break;
                                         
                                     case 2:  // ADICIONAR
                                         System.out.println("ADICIONAR - Recebendo produtos");
-                                        pos.enviarResposta(200);
                                         catalogo_Geral.AdicionarProdutos_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        pos.enviarResposta(200);
                                         break;
                                         
                                     case 3:  // REMOVER
                                         System.out.println("REMOVER - Removendo produto");
-                                        pos.enviarResposta(200);
                                         catalogo_Geral.RemoverProduto_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        pos.enviarResposta(200);
                                         break;
                                         
                                     default:
