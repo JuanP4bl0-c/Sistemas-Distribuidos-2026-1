@@ -5,13 +5,10 @@ import java.io.*;
 
 import java.util.Properties;
 
-import Servidor_java.Modelos.Capa;
-import Servidor_java.Modelos.Celular;
-import Servidor_java.Modelos.Pelicula;
-import Servidor_java.Modelos.PowerBank;
-import Servidor_java.Servicos.CatalogoProdutos;
+import Servidor_java.Modelos.*;
+import Servidor_java.Stream.*;
 
-import Servidor_java.Serializacao.RequestReply;
+import Servidor_java.Servicos.CatalogoProdutos;
 
 import Servidor_java.Utils.FileOutputStream_catalogo;
 
@@ -49,17 +46,49 @@ public class Servidor {
                     System.out.println("Cliente conectado: " + server.getInetAddress());
                     
                     boolean conexaoAtiva = true;
+
                     while (conexaoAtiva) {
                         try {
                             
-                            RequestReply requisicao = new RequestReply(cliente.getInputStream(), cliente.getOutputStream());
-                            int operacao = requisicao.obterOperacao();
-                            
-                            if (operacao == -1) {break;}
-                            
-                            requisicao.processarRequisicao(catalogo_Geral, operacao);
+                            PojoInputStream pis = new PojoInputStream(cliente.getInputStream());
+                            PojoOutputStream pos = new PojoOutputStream(new Produto[0], 0, cliente.getOutputStream());
 
-                            FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_Geral);
+                            while (true) {
+                                int operacao = pis.obterOperacao();
+                                if (operacao == -1) {
+                                    conexaoAtiva = false;
+                                    break;  // Cliente desconectou
+                                }
+                                
+                                System.out.println("Operação recebida: " + operacao);
+                                
+                                switch(operacao) {
+                                    case 1:  // LISTAR
+                                        System.out.println("LISTAR - Enviando catálogo");
+                                        pos.enviarResposta(200);
+                                        catalogo_Geral.listarCatalogo_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        break;
+                                        
+                                    case 2:  // ADICIONAR
+                                        System.out.println("ADICIONAR - Recebendo produtos");
+                                        pos.enviarResposta(200);
+                                        catalogo_Geral.AdicionarProdutos_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        break;
+                                        
+                                    case 3:  // REMOVER
+                                        System.out.println("REMOVER - Removendo produto");
+                                        pos.enviarResposta(200);
+                                        catalogo_Geral.RemoverProduto_Stream(cliente.getInputStream(), cliente.getOutputStream());
+                                        break;
+                                        
+                                    default:
+                                        System.out.println("Operação desconhecida: " + operacao);
+                                        pos.enviarResposta(0);
+                                }
+
+                                FileOutputStream_catalogo.salvarCatalogoCsv(catalogo_Geral); 
+                            }
+                            
                         
                         } catch (IOException e) {
                             conexaoAtiva = false;

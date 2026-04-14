@@ -56,8 +56,6 @@ public class CatalogoProdutos {
 
     public List<Produto> getTodos(){return ListaGeral;}
 
-
-
     public void listarCatalogo_Stream(InputStream entrada, OutputStream saida) throws IOException {
         var lista = this.getTodos();
         Produto[] array = lista.toArray(new Produto[0]);
@@ -66,15 +64,11 @@ public class CatalogoProdutos {
         pos.enviarDados();
     }
 
-    
-    
     public void AdicionarProdutos_Stream(InputStream entrada, OutputStream saida) throws IOException {
         // Lê tamanho do pacote
         byte[] tam_buffer = new byte[4];
         entrada.read(tam_buffer);
-        int tamanho = ByteBuffer.wrap(tam_buffer)
-            .order(ByteOrder.BIG_ENDIAN)
-            .getInt();
+        int tamanho = ByteBuffer.wrap(tam_buffer).order(ByteOrder.BIG_ENDIAN).getInt();
         
         // Lê dados
         byte[] data_buffer = new byte[tamanho];
@@ -83,12 +77,14 @@ public class CatalogoProdutos {
         // Desserializa
         PojoInputstream pis = new PojoInputstream(new ByteArrayInputStream(data_buffer));
 
-        int qtd = pis.lerInt_LE();
+
+        // int qtd = pis.lerInt_LE();
         
+        int qtd = 1;  // Envia apenas 1 produto por vez
         for(int i = 0; i < qtd; i++) {
-            Celular c = pis.lerCelular_LE();
-            this.AdicionarProduto(c);
-            System.out.println("  Adicionado: " + c.getNome());
+            Produto p = pis.lerProduto_LE();  // ✅ Lê o tipo automaticamente
+            this.AdicionarProduto(p);
+            System.out.println("DEBUG: Adicionado = " + p);
         }
         
     }

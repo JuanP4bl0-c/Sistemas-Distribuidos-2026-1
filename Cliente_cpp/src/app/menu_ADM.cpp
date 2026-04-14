@@ -46,6 +46,8 @@ void sendString(int sock, const std::string& str) {
     send(sock, str.c_str(), size, 0);
 }
 
+void sendString_toBuffer(std::ostringstream& buffer, const std::string& str);
+
 // 🔹 envia um Produto (equivalente ao OutputStream)
 void writeProduto(int sock, const Produto& p) {
     sendInt(sock, p.getId());
@@ -75,7 +77,6 @@ bool recvAll(int sock, char* buffer, size_t size) {
     return true;
 }
 
-
 // Envia operação ao servidor
 void enviarOperacao(int sock, int operacao) {
     sendInt(sock, operacao);
@@ -95,27 +96,27 @@ void verCatalogo(int sock) {
     // Recebe quantidade
     char qtd_buffer[4];
     recvAll(sock, qtd_buffer, sizeof(int));
-    int qtd = *(int*)qtd_buffer;
+    int qtd = ntohl(*(int*)qtd_buffer);  // ✅ Converte de BIG_ENDIAN para host
     
     std::cout << "Total de produtos: " << qtd << "\n";
     
     for (int i = 0; i < qtd; i++) {
-        char id_buffer[4], len_buffer[4], preco_buffer[8];
+        char id_buffer[4], len_buffer[4];
         
         // ID
         recvAll(sock, id_buffer, sizeof(int));
-        int id = *(int*)id_buffer;
+        int id = ntohl(*(int*)id_buffer);  // ✅ Converte
         
         // Nome
         recvAll(sock, len_buffer, sizeof(int));
-        int nome_len = *(int*)len_buffer;
+        int nome_len = ntohl(*(int*)len_buffer);  // ✅ Converte
         char nome_buffer[256];
         recvAll(sock, nome_buffer, nome_len);
         std::string nome(nome_buffer, nome_len);
         
         // Descrição
         recvAll(sock, len_buffer, sizeof(int));
-        int desc_len = *(int*)len_buffer;
+        int desc_len = ntohl(*(int*)len_buffer);  // ✅ Converte
         char desc_buffer[256];
         recvAll(sock, desc_buffer, desc_len);
         std::string descricao(desc_buffer, desc_len);
@@ -123,17 +124,24 @@ void verCatalogo(int sock) {
         // Preço
         char preco_buffer_d[8];
         recvAll(sock, preco_buffer_d, sizeof(double));
-        double preco = *(double*)preco_buffer_d;
-        
+        // ✅ Converte de BIG_ENDIAN para host
+        uint64_t preco_bits = be64toh(*(uint64_t*)preco_buffer_d);
+        double preco = *(double*)&preco_bits;
+
         std::cout << "  [" << id << "] " << nome << " - " << descricao 
-                  << " - R$ " << preco << "\n";
+                << " - R$ " << preco << "\n";
     }
     std::cout << "============================\n\n";
 }
 
-// Opção 2: Adicionar produto
+// Opção 2: Adicionar produto com tipo
 void adicionarProduto(int sock) {
     std::cout << "\n=== ADICIONAR NOVO PRODUTO ===\n";
+    std::cout << "Tipo:\n1. Celular\n2. PowerBank\n3. Capa\n4. Pelicula\nEscolha: ";
+    
+    int tipo;
+    std::cin >> tipo;
+    std::cin.ignore();
     
     int id;
     std::string nome, descricao;
@@ -155,19 +163,76 @@ void adicionarProduto(int sock) {
     
     std::cout << "Estoque: ";
     std::cin >> estoque;
+    std::cin.ignore();
     
-    // Cria produto
-    Produto p(id, nome, descricao, preco, estoque);
-    std::vector<Produto> lista = {p};
-    
-    // Serializa
+    // Buffer para serializar
     std::ostringstream buffer(std::ios::binary);
-    ProdutoOutputStream pos(lista, 1, buffer);
-    pos.write();
+    
+    // Escreve tipo
+    int tipo_net = htonl(tipo);
+    buffer.write((char*)&tipo_net, sizeof(int));
+    
+    // Campos base
+    int id_net = htonl(id);
+    buffer.write((char*)&id_net, sizeof(int));
+    
+    sendString_toBuffer(buffer, nome);
+    sendString_toBuffer(buffer, descricao);
+    
+    double preco_net = preco;
+    uint64_t preco_bits = htobe64(*(uint64_t*)&preco_net);
+    buffer.write((char*)&preco_bits, sizeof(uint64_t));
+    
+    int estoque_net = htonl(estoque);
+    buffer.write((char*)&estoque_net, sizeof(int));
+    
+    // Campos específicos por tipo
+    switch(tipo) {
+        case 1: { // Celular
+            std::string marca, modelo;
+            std::cout << "Marca: ";
+            std::getline(std::cin, marca);
+            std::cout << "Modelo: ";
+            std::getline(std::cin, modelo);
+            
+            sendString_toBuffer(buffer, marca);
+            sendString_toBuffer(buffer, modelo);
+            break;
+        }
+        case 2: { // PowerBank
+            std::string marca, modelo;
+            int capacidade;
+            std::cout << "Marca: ";
+            std::getline(std::cin, marca);
+            std::cout << "Modelo: ";
+            std::getline(std::cin, modelo);
+            std::cout << "Capacidade (mAh): ";
+            std::cin >> capacidade;
+            
+            sendString_toBuffer(buffer, marca);
+            sendString_toBuffer(buffer, modelo);
+            
+            int cap_net = htonl(capacidade);
+            buffer.write((char*)&cap_net, sizeof(int));
+            break;
+        }
+        case 3:
+        case 4: { // Capa ou Película
+            std::string modelo, material;
+            std::cout << "Modelo: ";
+            std::getline(std::cin, modelo);
+            std::cout << "Material: ";
+            std::getline(std::cin, material);
+            
+            sendString_toBuffer(buffer, modelo);
+            sendString_toBuffer(buffer, material);
+            break;
+        }
+    }
     
     std::string data = buffer.str();
     
-    // Envia tamanho (BIG_ENDIAN para compatibilidade)
+    // Envia tamanho
     int tamanho = data.size();
     int tamanho_net = htonl(tamanho);
     sendAll(sock, (char*)&tamanho_net, sizeof(int));
@@ -176,6 +241,14 @@ void adicionarProduto(int sock) {
     sendAll(sock, data.data(), data.size());
     
     std::cout << "Produto adicionado com sucesso!\n\n";
+}
+
+// Função auxiliar para serializar string em buffer
+void sendString_toBuffer(std::ostringstream& buffer, const std::string& str) {
+    int size = str.size();
+    int size_net = htonl(size);
+    buffer.write((char*)&size_net, sizeof(int));
+    buffer.write(str.c_str(), size);
 }
 
 // Opção 3: Remover produto
@@ -206,7 +279,6 @@ int main() {
     
     std::cout << "Servidor conectado!\n";
 
-    int operacao_net;
     for (;;)
     {
         int opcao;

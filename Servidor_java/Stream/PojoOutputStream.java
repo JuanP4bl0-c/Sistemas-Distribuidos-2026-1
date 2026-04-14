@@ -22,12 +22,12 @@ public class PojoOutputStream extends FilterOutputStream {
     }
 
     private void escreverInt(int valor) throws IOException {
-        byte[] buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(valor).array();
+        byte[] buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(valor).array();
         out.write(buffer);
     }
 
     private void escreverDouble(double valor) throws IOException {
-    byte[] buffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putDouble(valor).array();
+    byte[] buffer = ByteBuffer.allocate(8).order(ByteOrder.BIG_ENDIAN).putDouble(valor).array();
     out.write(buffer);
     }
 
@@ -54,4 +54,16 @@ public class PojoOutputStream extends FilterOutputStream {
         }
         out.flush(); // Empurra os dados pela rede
     }
+
+    /* 
+        Reply
+    */
+
+    public void enviarResposta(int codigo) throws IOException {
+        byte[] buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(codigo).array();
+        out.write(buffer);
+        out.flush();
+    }
+
+    
 }
