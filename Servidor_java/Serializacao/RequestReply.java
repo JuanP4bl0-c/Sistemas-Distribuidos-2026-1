@@ -8,9 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import Servidor_java.Servicos.CatalogoProdutos;
-import Servidor_java.Modelos.Celular;
-import Servidor_java.Modelos.Produto;
-import Servidor_java.Stream.*;
 
 public class RequestReply {
 
@@ -56,71 +53,25 @@ public class RequestReply {
             case OP_LISTAR:
                 System.out.println("LISTAR - Enviando catálogo");
                 enviarResposta(RESP_OK);
-                listarCatalogo(catalogo);
+                catalogo.listarCatalogo_Stream(entrada,saida);
                 break;
                 
             case OP_ADICIONAR:
                 System.out.println("ADICIONAR - Recebendo produtos");
                 enviarResposta(RESP_OK);
-                adicionarProdutos(catalogo);
+                catalogo.AdicionarProdutos_Stream(entrada, saida);
                 break;
                 
             case OP_REMOVER:
                 System.out.println("REMOVER - Removendo produto");
                 enviarResposta(RESP_OK);
-                RemoverProduto(catalogo);
+                catalogo.RemoverProduto_Stream(entrada, saida);
                 break;
                 
             default:
                 System.out.println("Operação desconhecida: " + operacao);
                 enviarResposta(0);
         }
-    }
-
-
-    private void listarCatalogo(CatalogoProdutos catalogo) throws IOException {
-        var lista = catalogo.getTodos();
-        Produto[] array = lista.toArray(new Produto[0]);
-        
-        PojoOutputStream pos = new PojoOutputStream(array, array.length, saida);
-        pos.enviarDados();
-
-    }
-
-    
-    
-    private void adicionarProdutos(CatalogoProdutos catalogo) throws IOException {
-        // Lê tamanho do pacote
-        byte[] tam_buffer = new byte[4];
-        entrada.read(tam_buffer);
-        int tamanho = ByteBuffer.wrap(tam_buffer)
-            .order(ByteOrder.BIG_ENDIAN)
-            .getInt();
-        
-        // Lê dados
-        byte[] data_buffer = new byte[tamanho];
-        entrada.read(data_buffer);
-        
-        // Desserializa
-        PojoInputstream pis = new PojoInputstream(new ByteArrayInputStream(data_buffer));
-        int qtd = pis.lerInt_LE();
-        
-        for(int i = 0; i < qtd; i++) {
-            Celular c = pis.lerCelular_LE();
-            catalogo.AdicionarProduto(c);
-            System.out.println("  Adicionado: " + c.getNome());
-        }
-    }
-    
-    private void RemoverProduto(CatalogoProdutos catalogo) throws IOException {
-        byte[] id_buffer = new byte[4];
-        entrada.read(id_buffer);
-        int id = ByteBuffer.wrap(id_buffer)
-            .order(ByteOrder.LITTLE_ENDIAN)
-            .getInt();
-        
-        catalogo.RemoverProduto(id);
-        System.out.println("  Removido: ID " + id);
     }
     
 }

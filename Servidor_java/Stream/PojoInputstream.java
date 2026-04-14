@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.*;
 
 
-import Servidor_java.Modelos.Celular;
+import Servidor_java.Modelos.*;
 
 
 public class PojoInputstream extends FilterInputStream{
