@@ -95,8 +95,10 @@ std::vector<std::shared_ptr<Produto>> ProdutoInputStream::read() {
             }
             case TipoProduto::POWERBANK: {
                 int capacidade = readInt();
+                std::string modelo = readString();
+                std::string marca = readString();
                 produto = std::make_shared<PowerBank>(
-                    id, nome, descricao, preco, estoque, capacidade);
+                    id, nome, descricao, preco, estoque, capacidade, modelo, marca);
                 break;
             }
             case TipoProduto::PRODUTO:

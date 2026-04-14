@@ -26,6 +26,8 @@ public:
 
     // Fecha a conexão
     void closeConnection();
+    
+    std::vector<char> receiveData();
 };
 
 #endif // TCP_CLIENT_H

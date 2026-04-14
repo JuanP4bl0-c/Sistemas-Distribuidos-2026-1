@@ -77,3 +77,13 @@ void TcpClient::closeConnection() {
         sock = -1;
     }
 }
+
+std::vector<char> TcpClient::receiveData() {
+    uint32_t sizeNet;
+    recv(sock, &sizeNet, sizeof(sizeNet), MSG_WAITALL);
+    uint32_t size = ntohl(sizeNet);
+
+    std::vector<char> buffer(size);
+    recv(sock, buffer.data(), size, MSG_WAITALL);
+    return buffer;
+}

@@ -3,14 +3,15 @@
 #include "modelos/Capa.h"
 #include "modelos/Pelicula.h"
 #include "modelos/PowerBank.h"
-#include "streams/ProdutoOutPutStream.h"
+#include "protocols/Request.h"
+#include "protocols/Reply.h"
+#include "protocols/MessageType.h"
 #include "network/TcpClient.h"
 #include "utils/Config.h"
 
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <sstream>
 
 int main() {
     try {
@@ -43,22 +44,39 @@ int main() {
                 "Vidro Temperado"),
 
             std::make_shared<PowerBank>(
-                2, "PowerBank", "Carregador Portátil", 149.90, 15, 10000, "PB-10000", "Xiaomi")
+                2, "PowerBank", "Carregador Portátil", 149.90, 15,
+                10000, "PB-10000", "Xiaomi")
         };
 
-        // 🔹 Serializa os produtos para um buffer binário
-        std::ostringstream buffer(std::ios::binary);
-        ProdutoOutputStream pos(lista, lista.size(), buffer);
-        pos.write();
+        // 🔹 Cria a requisição
+        std::vector<char> requestData =
+            Request::buildAddProdutos(lista);
 
-        std::string serialized = buffer.str();
-        std::vector<char> data(serialized.begin(), serialized.end());
+        // 🔹 Envia a requisição
+        if (!client.sendData(requestData)) {
+            std::cerr << "Erro ao enviar a requisição.\n";
+            return 1;
+        }
 
-        // 🔹 Envia os dados ao servidor
-        if (client.sendData(data)) {
-            std::cout << "Dados enviados com sucesso ao servidor!\n";
+        std::cout << "Requisição enviada com sucesso!\n";
+
+        // 🔹 Recebe a resposta do servidor
+        std::vector<char> replyData = client.receiveData();
+
+        if (replyData.empty()) {
+            std::cerr << "Erro ao receber resposta do servidor.\n";
+            return 1;
+        }
+
+        // 🔹 Interpreta a resposta
+        Reply reply = Reply::parse(replyData);
+
+        if (reply.getMessageType() ==
+            static_cast<uint32_t>(MessageType::REPLY_SUCCESS)) {
+            std::cout << "Servidor: " << reply.getMessage() << std::endl;
         } else {
-            std::cerr << "Erro ao enviar os dados.\n";
+            std::cerr << "Erro do servidor: "
+                      << reply.getMessage() << std::endl;
         }
 
         client.closeConnection();

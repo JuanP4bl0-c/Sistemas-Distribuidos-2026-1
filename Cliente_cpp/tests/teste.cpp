@@ -1,33 +1,39 @@
-#include <vector>
-#include <memory>
+#include "network/TcpClient.h"
+#include "protocols/Request.h"
+#include "protocols/Reply.h"
+#include "utils/Config.h"
 #include "modelos/Produto.h"
-#include "modelos/Celular.h"
-#include "modelos/Capa.h"
-#include "modelos/PowerBank.h"
-#include "modelos/Pelicula.h"
-#include "modelos/TipoProduto.h"
+#include <memory>
+#include <vector>
+#include <iostream>
 
 int main() {
-    std::vector<std::shared_ptr<Produto>> produtos;
+    Config config("config/Config.txt");
+    TcpClient client(config.getIp(), config.getPort());
 
-    produtos.push_back(std::make_shared<Produto>(
-        1, "Carregador", "USB-C", 79.90, 50));
-
-    produtos.push_back(std::make_shared<Celular>(
-        2, "Smartphone", "Android", 1999.90, 20, "Samsung", "Galaxy S23"));
-
-    produtos.push_back(std::make_shared<Capa>(
-        3, "Capa Protetora", "Silicone", 29.90, 30, "Silicone"));
-
-    produtos.push_back(std::make_shared<PowerBank>(
-        5, "PowerBank", "Portátil", 199.90, 10, 10000, "PB-1000", "MarcaX"));
-
-    produtos.push_back(std::make_shared<Pelicula>(
-        4, "Película de Vidro", "Proteção para tela", 49.90, 25, "Vidro Temperado"));
-
-    for (const auto& p : produtos) {
-        p->mostrar();
+    if (!client.connectToServer()) {
+        std::cerr << "Erro ao conectar.\n";
+        return 1;
     }
 
+    std::vector<std::shared_ptr<Produto>> produtos = {
+        std::make_shared<Produto>(
+            0, "Carregador", "USB-C", 79.90, 50)
+    };
+
+    // 🔹 Envia request
+    auto request = Request::buildAddProdutos(produtos);
+    client.sendData(request);
+
+    // 🔹 Recebe reply
+    auto replyData = client.receiveData();
+    Reply reply = Reply::parse(replyData);
+
+    if (reply.getMessageType() == 2)
+        std::cout << "Sucesso: " << reply.getMessage() << std::endl;
+    else
+        std::cout << "Erro: " << reply.getMessage() << std::endl;
+
+    client.closeConnection();
     return 0;
 }
