@@ -6,7 +6,8 @@ import java.io.*;
 import java.util.Properties;
 
 import Servidor_java.Modelos.*;
-import Servidor_java.Stream.*;
+import Servidor_java.Stream.PojoInputStream;
+import Servidor_java.Stream.PojoOutputStream;
 
 import Servidor_java.Servicos.CatalogoProdutos;
 
@@ -53,7 +54,8 @@ public class Servidor {
                             PojoInputStream pis = new PojoInputStream(cliente.getInputStream());
                             PojoOutputStream pos = new PojoOutputStream(new Produto[0], 0, cliente.getOutputStream());
 
-                            while (true) {
+                            for(;;) {
+
                                 int operacao = pis.obterOperacao();
                                 if (operacao == -1) {
                                     conexaoAtiva = false;

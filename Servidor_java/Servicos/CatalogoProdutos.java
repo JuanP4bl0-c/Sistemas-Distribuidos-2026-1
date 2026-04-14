@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Servidor_java.Modelos.*;
-import Servidor_java.Stream.PojoInputstream;
+import Servidor_java.Stream.PojoInputStream;
 import Servidor_java.Stream.PojoOutputStream;
 
 public class CatalogoProdutos {
@@ -75,14 +75,14 @@ public class CatalogoProdutos {
         entrada.read(data_buffer);
         
         // Desserializa
-        PojoInputstream pis = new PojoInputstream(new ByteArrayInputStream(data_buffer));
+        PojoInputStream pis = new PojoInputStream(new ByteArrayInputStream(data_buffer));
 
 
         // int qtd = pis.lerInt_LE();
         
         int qtd = 1;  // Envia apenas 1 produto por vez
         for(int i = 0; i < qtd; i++) {
-            Produto p = pis.lerProduto_LE();  // ✅ Lê o tipo automaticamente
+            Produto p = pis.lerProduto();
             this.AdicionarProduto(p);
             System.out.println("DEBUG: Adicionado = " + p);
         }
@@ -93,7 +93,7 @@ public class CatalogoProdutos {
         byte[] id_buffer = new byte[4];
         entrada.read(id_buffer);
         int id = ByteBuffer.wrap(id_buffer)
-            .order(ByteOrder.LITTLE_ENDIAN)
+            .order(ByteOrder.BIG_ENDIAN)
             .getInt();
         
         this.RemoverProduto(id);

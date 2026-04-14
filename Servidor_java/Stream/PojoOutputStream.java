@@ -60,7 +60,7 @@ public class PojoOutputStream extends FilterOutputStream {
     */
 
     public void enviarResposta(int codigo) throws IOException {
-        byte[] buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(codigo).array();
+        byte[] buffer = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(codigo).array();
         out.write(buffer);
         out.flush();
     }
