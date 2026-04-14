@@ -1,19 +1,23 @@
 #ifndef REPLY_H
 #define REPLY_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
 class Reply {
 private:
-    int messageType;
-    std::string message;
+    uint32_t messageType;  // Código da resposta (ex: 200 ou 0)
+    std::string message;   // Mensagem interpretada
 
 public:
+    Reply(uint32_t type, const std::string& message);
+
+    // Interpreta os dados recebidos do servidor
     static Reply parse(const std::vector<char>& data);
 
-    int getMessageType() const;
+    uint32_t getMessageType() const;
     std::string getMessage() const;
 };
 
-#endif
+#endif // REPLY_H

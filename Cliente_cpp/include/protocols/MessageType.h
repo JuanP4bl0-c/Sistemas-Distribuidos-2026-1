@@ -4,9 +4,11 @@
 #include <cstdint>
 
 enum class MessageType : uint32_t {
-    REQUEST_ADD_PRODUTOS = 1,
+    LISTAR = 1,
+    ADICIONAR = 2,
+    REMOVER = 3,
     REPLY_SUCCESS = 200,
-    REPLY_ERROR = 3
+    REPLY_ERROR = 0
 };
 
 #endif

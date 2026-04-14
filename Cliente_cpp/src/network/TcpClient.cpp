@@ -1,8 +1,8 @@
 #include "network/TcpClient.h"
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 TcpClient::TcpClient(const std::string& ip, int port)
     : sock(-1), ip(ip), port(port) {}
@@ -11,11 +11,10 @@ TcpClient::~TcpClient() {
     closeConnection();
 }
 
-// 🔹 Conecta ao servidor
 bool TcpClient::connectToServer() {
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
-        std::cerr << "Erro ao criar socket.\n";
+        std::cerr << "Erro ao criar o socket.\n";
         return false;
     }
 
@@ -24,14 +23,12 @@ bool TcpClient::connectToServer() {
     server.sin_port = htons(port);
 
     if (inet_pton(AF_INET, ip.c_str(), &server.sin_addr) <= 0) {
-        std::cerr << "IP inválido.\n";
+        std::cerr << "Endereço IP inválido.\n";
         return false;
     }
 
-    if (connect(sock, reinterpret_cast<sockaddr*>(&server), sizeof(server)) < 0) {
+    if (connect(sock, (sockaddr*)&server, sizeof(server)) < 0) {
         std::cerr << "Erro ao conectar ao servidor.\n";
-        close(sock);
-        sock = -1;
         return false;
     }
 
@@ -39,51 +36,49 @@ bool TcpClient::connectToServer() {
     return true;
 }
 
-// 🔹 Envia todos os bytes
-bool TcpClient::sendAll(const char* data, size_t size) {
-    size_t total = 0;
-    while (total < size) {
-        ssize_t sent = send(sock, data + total, size - total, 0);
+bool TcpClient::sendData(const std::vector<char>& data) {
+    size_t totalSent = 0;
+
+    while (totalSent < data.size()) {
+        ssize_t sent = send(sock,
+                            data.data() + totalSent,
+                            data.size() - totalSent,
+                            0);
         if (sent <= 0) {
             std::cerr << "Erro ao enviar dados.\n";
             return false;
         }
-        total += sent;
+        totalSent += sent;
     }
+
     return true;
 }
 
-// 🔹 Envia dados com o tamanho do pacote em big-endian
-bool TcpClient::sendData(const std::vector<char>& data) {
-    if (sock < 0) {
-        std::cerr << "Socket não conectado.\n";
-        return false;
+std::vector<char> TcpClient::receiveData() {
+    uint32_t netCode;
+    size_t totalReceived = 0;
+
+    while (totalReceived < sizeof(netCode)) {
+        ssize_t received = recv(sock,
+                                reinterpret_cast<char*>(&netCode) + totalReceived,
+                                sizeof(netCode) - totalReceived,
+                                0);
+        if (received <= 0) {
+            perror("Erro ao receber resposta");
+            return {};
+        }
+        totalReceived += received;
     }
 
-    uint32_t size = htonl(static_cast<uint32_t>(data.size()));
+    std::vector<char> data(sizeof(netCode));
+    std::memcpy(data.data(), &netCode, sizeof(netCode));
 
-    // Envia o tamanho do pacote
-    if (!sendAll(reinterpret_cast<const char*>(&size), sizeof(size)))
-        return false;
-
-    // Envia o conteúdo
-    return sendAll(data.data(), data.size());
+    return data;
 }
 
-// 🔹 Fecha a conexão
 void TcpClient::closeConnection() {
     if (sock >= 0) {
         close(sock);
         sock = -1;
     }
-}
-
-std::vector<char> TcpClient::receiveData() {
-    uint32_t sizeNet;
-    recv(sock, &sizeNet, sizeof(sizeNet), MSG_WAITALL);
-    uint32_t size = ntohl(sizeNet);
-
-    std::vector<char> buffer(size);
-    recv(sock, buffer.data(), size, MSG_WAITALL);
-    return buffer;
 }

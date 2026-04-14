@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <cstddef>
 
 class TcpClient {
 private:
@@ -11,23 +10,14 @@ private:
     std::string ip;
     int port;
 
-    // Envia todos os bytes garantindo que nada seja perdido
-    bool sendAll(const char* data, size_t size);
-
 public:
     TcpClient(const std::string& ip, int port);
     ~TcpClient();
 
-    // Conecta ao servidor
     bool connectToServer();
-
-    // Envia dados precedidos pelo tamanho do pacote
     bool sendData(const std::vector<char>& data);
-
-    // Fecha a conexão
-    void closeConnection();
-    
     std::vector<char> receiveData();
+    void closeConnection();
 };
 
 #endif // TCP_CLIENT_H

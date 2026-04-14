@@ -64,7 +64,7 @@ void ProdutoOutputStream::writeProduto(const std::shared_ptr<Produto>& produto) 
             auto capa = std::dynamic_pointer_cast<Capa>(produto);
             if (!capa)
                 throw std::runtime_error("Erro de conversão para Capa");
-
+            writeString(capa->getModelo());
             writeString(capa->getMaterial());
             break;
         }
@@ -73,7 +73,8 @@ void ProdutoOutputStream::writeProduto(const std::shared_ptr<Produto>& produto) 
             if (!pelicula)
                 throw std::runtime_error("Erro de conversão para Pelicula");
 
-            writeString(pelicula->getTipoPelicula());
+            writeString(pelicula->getModelo());
+            writeString(pelicula->getMaterial());
             break;
         }
         case TipoProduto::POWERBANK: {
@@ -81,6 +82,8 @@ void ProdutoOutputStream::writeProduto(const std::shared_ptr<Produto>& produto) 
             if (!powerbank)
                 throw std::runtime_error("Erro de conversão para PowerBank");
 
+            writeString(powerbank->getMarca());
+            writeString(powerbank->getModelo());
             writeInt(powerbank->getCapacidade());
             break;
         }

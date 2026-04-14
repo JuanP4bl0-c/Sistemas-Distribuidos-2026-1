@@ -15,10 +15,8 @@
 
 int main() {
     try {
-        // 🔹 Carrega configurações
         Config config("config/Config.txt");
 
-        // 🔹 Cria o cliente TCP
         TcpClient client(config.getIp(), config.getPort());
 
         if (!client.connectToServer()) {
@@ -26,41 +24,41 @@ int main() {
             return 1;
         }
 
-        // 🔹 Cria lista polimórfica de produtos
         std::vector<std::shared_ptr<Produto>> lista = {
+            // Produto Base: ID, Nome, Descrição, Preço, Estoque
             std::make_shared<Produto>(
-                0, "Carregador", "USB-C", 79.90, 50),
+                0, "Carregador", "USB-C Fast Charge", 79.90, 50),
 
+            // Celular: Base + Marca, Modelo
             std::make_shared<Celular>(
-                1, "Smartphone", "Android", 1999.90, 20,
+                1, "Smartphone", "Android 14", 1999.90, 20,
                 "Samsung", "Galaxy S23"),
 
+            // Capa: Base + Modelo do Celular, Material (Ordem do Java!)
             std::make_shared<Capa>(
-                3, "Capa Protetora", "Silicone", 29.90, 30,
-                "Silicone"),
+                2, "Capa Protetora", "Capa Anti-Impacto", 29.90, 30,
+                "Galaxy S23", "Silicone"),
 
+            // Pelicula: Base + Modelo do Celular, Tipo/Material (Ordem do Java!)
             std::make_shared<Pelicula>(
-                4, "Película", "Vidro Temperado", 19.90, 40,
-                "Vidro Temperado"),
+                3, "Película", "Proteção de Tela", 19.90, 40,
+                "Galaxy S23", "Vidro Temperado"),
 
+            // PowerBank: Base + Marca, Modelo, Capacidade (Ordem do Java!)
             std::make_shared<PowerBank>(
-                2, "PowerBank", "Carregador Portátil", 149.90, 15,
-                10000, "PB-10000", "Xiaomi")
+                4, "PowerBank", "Carregador Portátil", 149.90, 15,
+                "Xiaomi", "PB-10000", 10000)
         };
 
-        // 🔹 Cria a requisição
-        std::vector<char> requestData =
-            Request::buildAddProdutos(lista);
+        auto requestData = Request::buildAddProdutos(lista);
 
-        // 🔹 Envia a requisição
+        // Envia a requisição
         if (!client.sendData(requestData)) {
-            std::cerr << "Erro ao enviar a requisição.\n";
+            std::cerr << "Erro ao enviar a requisicao.\n";
             return 1;
         }
 
-        std::cout << "Requisição enviada com sucesso!\n";
-
-        // 🔹 Recebe a resposta do servidor
+        // Recebe a resposta
         std::vector<char> replyData = client.receiveData();
 
         if (replyData.empty()) {
@@ -68,7 +66,7 @@ int main() {
             return 1;
         }
 
-        // 🔹 Interpreta a resposta
+        // Interpreta a resposta
         Reply reply = Reply::parse(replyData);
 
         if (reply.getMessageType() ==
@@ -76,7 +74,7 @@ int main() {
             std::cout << "Servidor: " << reply.getMessage() << std::endl;
         } else {
             std::cerr << "Erro do servidor: "
-                      << reply.getMessage() << std::endl;
+                    << reply.getMessage() << std::endl;
         }
 
         client.closeConnection();

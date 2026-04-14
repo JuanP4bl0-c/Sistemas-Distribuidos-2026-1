@@ -82,23 +82,25 @@ std::vector<std::shared_ptr<Produto>> ProdutoInputStream::read() {
                 break;
             }
             case TipoProduto::CAPA: {
+                std::string modelo = readString();
                 std::string material = readString();
                 produto = std::make_shared<Capa>(
-                    id, nome, descricao, preco, estoque, material);
+                    id, nome, descricao, preco, estoque, modelo, material);
                 break;
             }
             case TipoProduto::PELICULA: {
-                std::string tipoPelicula = readString();
+                std::string modelo = readString();
+                std::string material = readString();
                 produto = std::make_shared<Pelicula>(
-                    id, nome, descricao, preco, estoque, tipoPelicula);
+                    id, nome, descricao, preco, estoque, modelo, material);
                 break;
             }
             case TipoProduto::POWERBANK: {
-                int capacidade = readInt();
-                std::string modelo = readString();
                 std::string marca = readString();
+                std::string modelo = readString();
+                int capacidade = readInt();
                 produto = std::make_shared<PowerBank>(
-                    id, nome, descricao, preco, estoque, capacidade, modelo, marca);
+                    id, nome, descricao, preco, estoque, marca, modelo, capacidade);
                 break;
             }
             case TipoProduto::PRODUTO:

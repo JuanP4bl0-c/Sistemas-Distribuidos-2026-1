@@ -5,14 +5,14 @@
 
 class PowerBank : public Produto {
 private:
-    int capacidade; // mAh
-    std::string modelo;
     std::string marca;
+    std::string modelo;
+    int capacidade; // mAh
+    
 
 public:
     PowerBank(int id, const std::string& nome, const std::string& descricao,
-              double preco, int quantidade_estoque, int capacidade,
-              const std::string& modelo, const std::string& marca);
+              double preco, int quantidade_estoque, const std::string& marca, const std::string& modelo, int capacidade);
 
     TipoProduto getTipo() const override;
     void mostrar() const override;

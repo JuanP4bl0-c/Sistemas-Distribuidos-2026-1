@@ -1,30 +1,37 @@
 #include "protocols/Reply.h"
-#include "protocols/MessageType.h"
-#include <sstream>
 #include <arpa/inet.h>
+#include <cstring>
+#include <stdexcept>
+
+Reply::Reply(uint32_t type, const std::string& message)
+    : messageType(type), message(message) {}
 
 Reply Reply::parse(const std::vector<char>& data) {
-    std::istringstream stream(
-        std::string(data.begin(), data.end()), std::ios::binary);
+    if (data.size() < sizeof(uint32_t)) {
+        throw std::runtime_error("Resposta inválida.");
+    }
 
-    uint32_t typeNet;
-    stream.read(reinterpret_cast<char*>(&typeNet), sizeof(typeNet));
-    uint32_t type = ntohl(typeNet);
+    uint32_t netCode;
+    std::memcpy(&netCode, data.data(), sizeof(uint32_t));
+    uint32_t code = ntohl(netCode);
 
-    uint32_t sizeNet;
-    stream.read(reinterpret_cast<char*>(&sizeNet), sizeof(sizeNet));
-    uint32_t size = ntohl(sizeNet);
+    std::string msg;
+    switch (code) {
+        case 200:
+            msg = "Operação realizada com sucesso.";
+            break;
+        case 0:
+            msg = "Erro na operação.";
+            break;
+        default:
+            msg = "Código desconhecido: " + std::to_string(code);
+            break;
+    }
 
-    std::string message(size, '\0');
-    stream.read(&message[0], size);
-
-    Reply reply;
-    reply.messageType = static_cast<int>(type);
-    reply.message = message;
-    return reply;
+    return Reply(code, msg);
 }
 
-int Reply::getMessageType() const {
+uint32_t Reply::getMessageType() const {
     return messageType;
 }
 
