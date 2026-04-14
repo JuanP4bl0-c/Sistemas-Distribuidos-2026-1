@@ -3,13 +3,14 @@
 
 #include <vector>
 #include <istream>
+#include <string>
 #include "modelos/Produto.h"
 
 class ProdutoInputStream {
 private:
     std::istream& in;
-    std::vector<Produto> produtos;
 
+    // Métodos auxiliares para leitura em big-endian
     int readInt();
     double readDouble();
     std::string readString();
@@ -17,7 +18,8 @@ private:
 public:
     explicit ProdutoInputStream(std::istream& in);
 
-    std::vector<Produto> read();   // Lê todos os produtos
+    // Lê todos os produtos do stream
+    std::vector<Produto> read();
 };
 
-#endif
+#endif // PRODUTO_INPUT_STREAM_H
