@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-// Construtor
+// 🔹 Construtor
 ProdutoInputStream::ProdutoInputStream(std::istream& in) : in(in) {}
 
 // 🔹 Lê inteiro em big-endian
@@ -51,20 +51,63 @@ std::string ProdutoInputStream::readString() {
     return str;
 }
 
-// 🔹 Lê todos os produtos
-std::vector<Produto> ProdutoInputStream::read() {
-    std::vector<Produto> lista;
+// 🔹 Lê todos os produtos com suporte a subclasses
+std::vector<std::shared_ptr<Produto>> ProdutoInputStream::read() {
+    std::vector<std::shared_ptr<Produto>> lista;
 
     int qtd = readInt();
+    if (qtd < 0)
+        throw std::runtime_error("Quantidade de produtos inválida.");
 
     for (int i = 0; i < qtd; ++i) {
+        // 🔹 Lê o tipo do produto
+        TipoProduto tipo = static_cast<TipoProduto>(readInt());
+
+        // 🔹 Atributos comuns
         int id = readInt();
         std::string nome = readString();
         std::string descricao = readString();
         double preco = readDouble();
         int estoque = readInt();
 
-        lista.emplace_back(id, nome, descricao, preco, estoque);
+        std::shared_ptr<Produto> produto;
+
+        // 🔹 Instancia a subclasse correta
+        switch (tipo) {
+            case TipoProduto::CELULAR: {
+                std::string marca = readString();
+                std::string modelo = readString();
+                produto = std::make_shared<Celular>(
+                    id, nome, descricao, preco, estoque, marca, modelo);
+                break;
+            }
+            case TipoProduto::CAPA: {
+                std::string material = readString();
+                produto = std::make_shared<Capa>(
+                    id, nome, descricao, preco, estoque, material);
+                break;
+            }
+            case TipoProduto::PELICULA: {
+                std::string tipoPelicula = readString();
+                produto = std::make_shared<Pelicula>(
+                    id, nome, descricao, preco, estoque, tipoPelicula);
+                break;
+            }
+            case TipoProduto::POWERBANK: {
+                int capacidade = readInt();
+                produto = std::make_shared<PowerBank>(
+                    id, nome, descricao, preco, estoque, capacidade);
+                break;
+            }
+            case TipoProduto::PRODUTO:
+            default: {
+                produto = std::make_shared<Produto>(
+                    id, nome, descricao, preco, estoque);
+                break;
+            }
+        }
+
+        lista.push_back(produto);
     }
 
     return lista;

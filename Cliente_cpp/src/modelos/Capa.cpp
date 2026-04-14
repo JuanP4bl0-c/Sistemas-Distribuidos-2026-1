@@ -2,9 +2,17 @@
 #include <string>
 #include <iostream>
 
-Capa::Capa(int id, std::string nome, std::string descricao, float preco, int quantidade_estoque, std::string material, std::string modelo) : Produto(id, nome, descricao, preco, quantidade_estoque) {
-    this->material = material;
-    this->modelo = modelo;
+Capa::Capa(int id, const std::string& nome, const std::string& descricao, double preco, int quantidade_estoque, const std::string& material)
+            : Produto(id, nome, descricao, preco, quantidade_estoque), material(material) {}
+
+TipoProduto Capa::getTipo() const {
+    return TipoProduto::CAPA;
+}
+
+void Capa::mostrar() const {
+    Produto::mostrar();
+    std::cout << "Material: " << material << std::endl;
+    
 }
 
 std::string Capa::getMaterial() const {
@@ -14,22 +22,4 @@ std::string Capa::getMaterial() const {
 void Capa::setMaterial(const std::string& material) {
     this->material = material;
 }
-std::string Capa::getModelo() const {
-    return modelo;
-}
-void Capa::setModelo(const std::string& modelo) {
-    this->modelo = modelo;
-}
-
-void Capa::mostrar() const {
-    std::cout << "ID: " << id << 
-    "\n Nome: " << nome << 
-    "\n Descrição: " << descricao << 
-    "\n Material: " << material << 
-    "\n Modelo: " << modelo << 
-    "\n Preco: R$" << preco << 
-    "\n Quantidade em Estoque: " << quantidade_estoque << std::endl;
-
-}
-
 

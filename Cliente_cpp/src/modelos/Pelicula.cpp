@@ -2,27 +2,29 @@
 #include <string>
 #include <iostream>
 
-Pelicula::Pelicula(int id, std::string nome, std::string descricao, float preco, int quantidade_estoque, std::string modelo, std::string material)
-    : Produto(id, nome, descricao, preco, quantidade_estoque), modelo(modelo), material(material) {}
 
-std::string Pelicula::getModelo() const {
-    return modelo;
+Pelicula::Pelicula(int id, const std::string& nome, const std::string& descricao, double preco, int quantidade_estoque, const std::string& tipo)
+                    : Produto(id, nome, descricao, preco, quantidade_estoque), tipo(tipo) {
 }
 
-void Pelicula::setModelo(const std::string& modelo) {
-    this->modelo = modelo;
-}
 
-std::string Pelicula::getMaterial() const {
-    return material;
-}
-
-void Pelicula::setMaterial(const std::string& material) {
-    this->material = material;
+TipoProduto Pelicula::getTipo() const {
+    return TipoProduto::PELICULA;
 }
 
 void Pelicula::mostrar() const {
     Produto::mostrar();
-    std::cout << "Modelo: " << modelo << std::endl;
-    std::cout << "Material: " << material << std::endl;
+    std::cout << "Tipo: " << tipo << std::endl;
 }
+
+std::string Pelicula::getTipoPelicula() const {
+    return tipo;
+}
+
+void Pelicula::setTipoPelicula(const std::string& tipo) {
+    this->tipo = tipo;
+}
+
+
+
+

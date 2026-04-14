@@ -1,20 +1,21 @@
 #ifndef PELICULA_H
 #define PELICULA_H
 
-#include <string>
-#include "Produto.h"
+#include "modelos/Produto.h"
 
 class Pelicula : public Produto {
 private:
-    std::string modelo;
-    std::string material;
+    std::string tipo;
+
 public:
-    Pelicula(int id, std::string nome, std::string descricao, float preco, int quantidade_estoque, std::string modelo, std::string material);
-    std::string getModelo() const;
-    void setModelo(const std::string& modelo);
-    std::string getMaterial() const;
-    void setMaterial(const std::string& material);
+    Pelicula(int id, const std::string& nome, const std::string& descricao,
+             double preco, int quantidade_estoque, const std::string& tipo);
+
+    TipoProduto getTipo() const override;
     void mostrar() const override;
+
+    std::string getTipoPelicula() const;
+    void setTipoPelicula(const std::string& tipo);
 };
 
-#endif // PELICULA_H
+#endif

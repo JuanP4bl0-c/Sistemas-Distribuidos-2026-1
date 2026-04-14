@@ -1,25 +1,33 @@
 #include <vector>
-#include <fstream>
+#include <memory>
 #include "modelos/Produto.h"
 #include "modelos/Celular.h"
-#include "streams/ProdutoOutPutStream.h"
+#include "modelos/Capa.h"
+#include "modelos/PowerBank.h"
+#include "modelos/Pelicula.h"
+#include "modelos/TipoProduto.h"
 
 int main() {
+    std::vector<std::shared_ptr<Produto>> produtos;
 
-    Celular c(3, "Celular", "Smartphone", 999.9, 5, "Samsung", "Galaxy S21");
+    produtos.push_back(std::make_shared<Produto>(
+        1, "Carregador", "USB-C", 79.90, 50));
 
-    std::vector<Produto> lista = {
-        Produto(1, "Carregador", "USB-C", 79.9, 10),
-        Produto(2, "Capa", "Silicone", 29.9, 20),
-        c
-    };
+    produtos.push_back(std::make_shared<Celular>(
+        2, "Smartphone", "Android", 1999.90, 20, "Samsung", "Galaxy S23"));
 
-    std::ofstream file("dados.bin", std::ios::binary);
+    produtos.push_back(std::make_shared<Capa>(
+        3, "Capa Protetora", "Silicone", 29.90, 30, "Silicone"));
 
-    ProdutoOutputStream pos(lista, lista.size(), file);
-    pos.write();
+    produtos.push_back(std::make_shared<PowerBank>(
+        5, "PowerBank", "Portátil", 199.90, 10, 10000, "PB-1000", "MarcaX"));
 
-    file.close();
+    produtos.push_back(std::make_shared<Pelicula>(
+        4, "Película de Vidro", "Proteção para tela", 49.90, 25, "Vidro Temperado"));
+
+    for (const auto& p : produtos) {
+        p->mostrar();
+    }
 
     return 0;
 }

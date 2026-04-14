@@ -2,8 +2,12 @@
 #include <string>
 #include <iostream>
 
-PowerBank::PowerBank(int id, std::string nome, std::string descricao, float preco, int quantidade_estoque, int capacidade, std::string modelo, std::string marca)
-    : Produto(id, nome, descricao, preco, quantidade_estoque), capacidade(capacidade), modelo(modelo), marca(marca) {}
+PowerBank::PowerBank(int id, const std::string& nome, const std::string& descricao, double preco, int quantidade_estoque, int capacidade, const std::string& modelo, const std::string& marca)
+                        : Produto(id, nome, descricao, preco, quantidade_estoque), capacidade(capacidade), modelo(modelo), marca(marca) {}
+
+TipoProduto PowerBank::getTipo() const {
+    return TipoProduto::POWERBANK;
+}
 
 int PowerBank::getCapacidade() const {
     return capacidade;
