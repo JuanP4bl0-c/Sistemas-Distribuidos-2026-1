@@ -3,7 +3,7 @@ Praticas e Trabalho em dupla feito com C++ como cliente e Java como servidor.
 
 **Participantes:** Juan Pablo Rufino Mesquita (509982)  - Felipe Kauan dos Santos Silva  (510175)
 
-## Sobre o Projeto
+## 1. Sobre o Projeto
 
 Implementação de projeto de E-comerce de Aparelhos Celulares e acessórios, onde é trabalhado com serialização de Pojos de Porodutos e aplicação de requrst/reply em coneção TCP
 
@@ -22,21 +22,20 @@ O projeto implementa um e-commerce de aparelhos celulares e acessórios, onde:
 
 ### 3.1 Servidor Java
 
-javac -d . *.java Modelos/*.java Serializacao/*.java Servicos/*.java Stream/*.java Utils/*.java
+    javac -d . *.java Modelos/*.java Serializacao/*.java Servicos/*.java Stream/*.java Utils/*.java
 
 Atenção, o servidor java utiliza de um aquivo que não foi enviado no git chamado config.properties, onde possui informações como o Ip local da maquina e da porta. para criar um para sua maquina procure pelo seu ip e insira nesse formado de arquivo:
 
     server.host=0.0.0.0
     server.porta=5001
 
-# Execute
-java Servidor
-
-
-### Contem:
+### 3.2 Cliente C++
     
-Feito Pojo,Modelos e Serviços em um servidor em TCP
-Inputstring para o servidor
-Outputstring para o cliente
+    make clean
+    make cliente
+    ./bin/cliente
 
-O Celular foi o Pojo escolhido para ser trabalhado com as streams
+Edite o Config.txt para o Ip do seu servidor:
+
+    SERVER_IP=127.0.0.1
+    SERVER_PORT=8888
