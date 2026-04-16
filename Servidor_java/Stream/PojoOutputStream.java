@@ -12,9 +12,6 @@ public class PojoOutputStream extends FilterOutputStream {
     private Produto[] produtos;
     private int qtd_produtos;
     
-    
-    
-    // Construtor exigido pela Questão 2, item 'a'
     public PojoOutputStream(Produto[] produtos,int qtd_produtos, OutputStream out) {
         super(out);
         this.produtos = produtos;
@@ -31,14 +28,12 @@ public class PojoOutputStream extends FilterOutputStream {
     out.write(buffer);
     }
 
-    // Método auxiliar para enviar String com tamanho dinâmico
     private void escreverString(String texto) throws IOException {
         byte[] stringBytes = texto.getBytes(StandardCharsets.UTF_8);
         escreverInt(stringBytes.length);
         out.write(stringBytes);
     }
 
-    // Método principal para disparar os dados
     public void enviarDados() throws IOException {
         
         escreverInt(qtd_produtos);
@@ -46,13 +41,12 @@ public class PojoOutputStream extends FilterOutputStream {
         for (int i = 0; i < qtd_produtos; i++) {
             Produto c = produtos[i];
             
-            // O trabalho pede PELO MENOS 3 atributos. Vamos enviar 4:
             escreverInt(c.getId());
             escreverString(c.getNome());
             escreverString(c.getDescricao());
             escreverDouble((float) c.getPreco());
         }
-        out.flush(); // Empurra os dados pela rede
+        out.flush();
     }
 
     /* 

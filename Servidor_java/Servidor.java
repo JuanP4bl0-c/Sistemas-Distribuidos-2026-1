@@ -13,6 +13,7 @@ import Servidor_java.Servicos.CatalogoProdutos;
 
 import Servidor_java.Utils.FileOutputStream_catalogo;
 
+
 public class Servidor {
 
     public static void main(String args[]){

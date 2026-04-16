@@ -9,7 +9,8 @@
 #include <sstream>
 
 #define port 5001
-#define host "0.0.0.0"
+// #define host "192.168.0.7"
+#define host "10.10.231.118"
 
 #define OP_PING 0
 #define OP_LISTAR 1
@@ -79,14 +80,30 @@ bool recvAll(int sock, char* buffer, size_t size) {
 
 // Envia operação ao servidor
 void enviarOperacao(int sock, int operacao) {
-    sendInt(sock, operacao);
+    // 1. Envia o tamanho do pacote (4 bytes para a operação)
+    int tamanho = sizeof(int);
+    int tamanho_net = htonl(tamanho);
+    sendAll(sock, (char*)&tamanho_net, sizeof(int));
+    
+    // 2. Envia a operação
+    int op_net = htonl(operacao);
+    sendAll(sock, (char*)&op_net, sizeof(int));
 }
 
-// Recebe resposta do servidor
 int receberResposta(int sock) {
     char resp_buffer[4];
     recvAll(sock, resp_buffer, sizeof(int));
-    return *(int*)resp_buffer;
+    
+    // Debug: mostra os bytes recebidos
+    std::cout << "DEBUG - Bytes recebidos: ";
+    for(int i = 0; i < 4; i++) {
+        std::cout << std::hex << (int)(unsigned char)resp_buffer[i] << " ";
+    }
+    std::cout << std::dec << std::endl;
+    
+    int valor = ntohl(*(int*)resp_buffer);
+    std::cout << "DEBUG - Valor após ntohl: " << valor << std::endl;
+    return valor;
 }
 
 // Opção 1: Ver catálogo
@@ -259,7 +276,8 @@ void removerProduto(int sock) {
     std::cout << "ID do produto a remover: ";
     std::cin >> id;
     
-    sendInt(sock, id);
+    int id_net = htonl(id);  // ✅ Converte para BIG_ENDIAN
+    sendAll(sock, (char*)&id_net, sizeof(int));
     
     std::cout << "Produto removido com sucesso!\n\n";
 }
@@ -283,7 +301,7 @@ int main() {
     {
         int opcao;
         bool sair = false;
-        std::cout << "MENU\n1.ver catalogo \n2.adicionar Celular\n3.remover Produto\n4.Sair\nEscolha: ";
+        std::cout << "MENU - ADM \n1.ver catalogo \n2.adicionar Produto\n3.remover Produto\n4.Sair\nEscolha: ";
         std::cin >> opcao;
 
         switch (opcao)

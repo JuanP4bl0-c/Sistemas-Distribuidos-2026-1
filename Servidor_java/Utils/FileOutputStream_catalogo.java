@@ -11,8 +11,8 @@ import Servidor_java.Modelos.Produto;
 
 import Servidor_java.Servicos.CatalogoProdutos;
 
-import Servidor_java.Stream.PojoInputstream;
-import Servidor_java.Stream.PojoOutputStream;
+import Servidor_java.Stream.*;
+
 
 public class FileOutputStream_catalogo {
     
@@ -52,10 +52,10 @@ public class FileOutputStream_catalogo {
             
             System.out.println("Carregando " + quantidade + " produtos do arquivo...");
             
-            PojoInputstream pis = new PojoInputstream(fis);
+            PojoInputStream pis = new PojoInputStream(fis);
             
             for (int i = 0; i < quantidade; i++) {
-                Produto c = pis.lerCelular_LE();
+                Produto c = pis.lerCelular();
                 catalogo.AdicionarProduto(c);
                 System.out.println("  Carregado: " + c.getNome());
             }

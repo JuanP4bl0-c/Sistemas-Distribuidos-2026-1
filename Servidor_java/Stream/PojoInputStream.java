@@ -13,7 +13,6 @@ public class PojoInputStream extends FilterInputStream{
     public PojoInputStream(InputStream entrada) {super(entrada);}   
 
 
-    //Leitura em dados sem formato
     public int lerInt() throws IOException{
         byte[] buffer = new byte[4];
         this.read(buffer);
@@ -114,7 +113,7 @@ public class PojoInputStream extends FilterInputStream{
         Seção de Request/Reply
     */
 
-
+    //Versao desatualizada
     public int obterOperacao_old() throws IOException { 
         byte[] op_buffer = new byte[4];
         int bytes_lidos = this.read(op_buffer);
@@ -127,19 +126,13 @@ public class PojoInputStream extends FilterInputStream{
     }
 
 
-    //Versao instavel
-
-
-    // No arquivo PojoInputStream.java
     public int obterOperacao() throws IOException { 
-        // 1. Pula os 4 bytes do "Tamanho do Pacote" que o C++ envia
         byte[] tamanho_buffer = new byte[4];
         int bytesLidos = this.read(tamanho_buffer);
         if (bytesLidos <= 0) {
             return -1; // Cliente desconectou
         }
         
-        // 2. Agora lê os 4 bytes da "Operação" real
         byte[] op_buffer = new byte[4];
         this.read(op_buffer);
         return ByteBuffer.wrap(op_buffer).order(ByteOrder.BIG_ENDIAN).getInt();
