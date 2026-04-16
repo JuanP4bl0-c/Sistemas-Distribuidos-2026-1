@@ -39,3 +39,5 @@ Edite o Config.txt para o Ip do seu servidor:
 
     SERVER_IP=127.0.0.1
     SERVER_PORT=8888
+
+[Video de Apresentação da primeira etapa do código](https://drive.google.com/file/d/1o8UAPD-17Kkl8Uvrzdf1hnWGAX6TEFoZ/view?usp=drive_link)
