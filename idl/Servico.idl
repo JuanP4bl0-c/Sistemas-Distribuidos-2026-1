@@ -1,0 +1,8 @@
+module CatalogoApp {
+    typedef sequence<octet> ByteArray;
+
+    interface ServicoCatalogo {
+        // ✅ IGUAL AO JAVA: Agora com os 3 parâmetros
+        ByteArray doOperation(in string objectRef, in long methodId, in ByteArray arguments);
+    };
+};
