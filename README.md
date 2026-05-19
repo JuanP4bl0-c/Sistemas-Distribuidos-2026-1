@@ -22,20 +22,13 @@ O projeto implementa um e-commerce de aparelhos celulares e acessórios, onde:
 
 ### 3.1 Servidor Java
 
-    javac -d . *.java Modelos/*.java Serializacao/*.java Servicos/*.java Stream/*.java Utils/*.java
 
-Atenção, o servidor java utiliza de um aquivo que não foi enviado no git chamado config.properties, onde possui informações como o Ip local da maquina e da porta. para criar um para sua maquina procure pelo seu ip e insira nesse formado de arquivo:
+Executar o CORBA:
 
-    server.host=0.0.0.0
-    server.porta=5001
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 com.sun.corba.se.impl.naming.cosnaming.TransientNameServer -ORBInitialPort 1050
 
-### 3.2 Cliente C++
-    
-    make clean
-    make cliente
-    ./bin/cliente
 
-Edite o Config.txt para o Ip do seu servidor:
+ executar o Servidor:
+ /usr/lib/jvm/java-8-openjdk-amd64/bin/javac -cp .:json-20240303.jar Servidor_java/*.java CatalogoApp/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
 
-    SERVER_IP=127.0.0.1
-    SERVER_PORT=8888
+ /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort 1050 -ORBInitialHost 192.168.0.6

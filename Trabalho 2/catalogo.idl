@@ -1,0 +1,9 @@
+module CatalogoApp {
+    // Define o array de bytes para empacotar os argumentos (JSON/Protobuf)
+    typedef sequence<octet> ByteArray;
+
+    // A interface do seu serviço remoto
+    interface ServicoCatalogo {
+        ByteArray doOperation(in string objectRef, in long methodId, in ByteArray arguments);
+    };
+};
