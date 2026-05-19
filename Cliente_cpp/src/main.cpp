@@ -3,84 +3,104 @@
 #include "modelos/Capa.h"
 #include "modelos/Pelicula.h"
 #include "modelos/PowerBank.h"
-#include "protocols/Request.h"
-#include "protocols/Reply.h"
-#include "protocols/MessageType.h"
-#include "network/TcpClient.h"
 #include "utils/Config.h"
+
+// ➔ Novas camadas organizadas de infraestrutura e protocolos
+#include "network/CORBA_Client.h"
+#include "protocols/CatalogoStub.h"
 
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <string>
 
-int main() {
+void exibirErro(const std::string& msg) {
+    std::cerr << "\n[ERRO] " << msg << "\n";
+}
+
+int main(int argc, char** argv) {
     try {
         Config config("config/Config.txt");
 
-        TcpClient client(config.getIp(), config.getPort());
+        // 1. Inicializa a camada de transporte CORBA
+        CorbaClient client(argc, argv, "CatalogoRemoto");
 
-        if (!client.connectToServer()) {
-            std::cerr << "Falha ao conectar ao servidor.\n";
+        if (!client.isConnected()) {
+            exibirErro("Falha crítica: Cliente C++ não conseguiu se conectar ao NameService.");
             return 1;
         }
 
-        std::vector<std::shared_ptr<Produto>> lista = {
-            // Produto Base: ID, Nome, Descrição, Preço, Estoque
-            std::make_shared<Produto>(
-                0, "Carregador", "USB-C Fast Charge", 79.90, 50),
+        // 2. Instancia o Stub (Proxy) injetando a rede CORBA nele
+        // A partir daqui, o main conversa APENAS com o stub!
+        CatalogoStub stub(client, "CatalogoRemoto");
 
-            // Celular: Base + Marca, Modelo
-            std::make_shared<Celular>(
-                1, "Smartphone", "Android 14", 1999.90, 20,
-                "Samsung", "Galaxy S23"),
+        bool rodando = true;
+        while (rodando) {
+            std::cout << "\n========================================\n";
+            std::cout << "        MENU CATALOGO CORBA (C++)       \n";
+            std::cout << "========================================\n";
+            std::cout << "1. Listar Produtos do Catalogo\n";
+            std::cout << "2. Adicionar Carga de Teste (Produtos)\n";
+            std::cout << "3. Remover Produto por ID\n";
+            std::cout << "0. Sair\n";
+            std::cout << "Escolha uma opcao: ";
+            
+            int opcao;
+            std::cin >> opcao;
 
-            // Capa: Base + Modelo do Celular, Material (Ordem do Java!)
-            std::make_shared<Capa>(
-                2, "Capa Protetora", "Capa Anti-Impacto", 29.90, 30,
-                "Galaxy S23", "Silicone"),
+            switch (opcao) {
+                case 1: {
+                    std::cout << "\n[Enviando] Solicitando listagem do catalogo...\n";
+                    
+                    // O Stub executa a chamada, captura o JSON do Java e já imprime na tela!
+                    stub.listarProdutos(); 
+                    
+                    std::cout << "\n========================================\n";
+                    break;
+                }
+                
+                case 2: {
+                    std::cout << "\n[Enviando] Preparando carga de produtos para cadastro...\n";
+                    
+                    std::vector<std::shared_ptr<Produto>> lista = {
+                        std::make_shared<Celular>(1, "IPhone 15", "Apple celular", 5000.0, 5, "Apple", "15 Pro"),
+                        std::make_shared<Capa>(2, "Capa Iphone", "Capa azul", 15.0, 20, "Iphone 15", "Plastico"),
+                        std::make_shared<Pelicula>(3, "Pelicula", "5 polegadas", 25.50, 15, "Iphone 15", "Vidro"),
+                        std::make_shared<PowerBank>(4, "Power Bank", "Bateria", 200.0, 10, "Xiaomi", "10000mAh", 1000)
+                    };
 
-            // Pelicula: Base + Modelo do Celular, Tipo/Material (Ordem do Java!)
-            std::make_shared<Pelicula>(
-                3, "Película", "Proteção de Tela", 19.90, 40,
-                "Galaxy S23", "Vidro Temperado"),
+                    // O Stub engole a lista de produtos, empacota e devolve a String de status limpa
+                    std::string resultado = stub.adicionarProdutos(lista);
+                    std::cout << "\n>>> [Status do Servidor]: " << resultado << "\n";
+                    break;
+                }
+                
+                case 3: {
+                    std::cout << "\nDigite o ID do produto que deseja remover: ";
+                    int idRemover;
+                    std::cin >> idRemover;
 
-            // PowerBank: Base + Marca, Modelo, Capacidade (Ordem do Java!)
-            std::make_shared<PowerBank>(
-                4, "PowerBank", "Carregador Portátil", 149.90, 15,
-                "Xiaomi", "PB-10000", 10000)
-        };
+                    std::cout << "[Enviando] Solicitando exclusao do ID " << idRemover << "...\n";
 
-        auto requestData = Request::buildAddProdutos(lista);
-
-        // Envia a requisição
-        if (!client.sendData(requestData)) {
-            std::cerr << "Erro ao enviar a requisicao.\n";
-            return 1;
+                    // Chamada transparente passando o ID puro
+                    std::string resultado = stub.removerProduto(idRemover);
+                    std::cout << "\n>>> [Status do Servidor]: " << resultado << "\n";
+                    break;
+                }
+                
+                case 0:
+                    std::cout << "\nEncerrando o cliente CORBA. Ate logo!\n";
+                    rodando = false;
+                    break;
+                
+                default:
+                    exibirErro("Opcao invalida! Tente novamente.");
+                    break;
+            }
         }
-
-        // Recebe a resposta
-        std::vector<char> replyData = client.receiveData();
-
-        if (replyData.empty()) {
-            std::cerr << "Erro ao receber resposta do servidor.\n";
-            return 1;
-        }
-
-        // Interpreta a resposta
-        Reply reply = Reply::parse(replyData);
-
-        if (reply.getMessageType() ==
-            static_cast<uint32_t>(MessageType::REPLY_SUCCESS)) {
-            std::cout << "Servidor: " << reply.getMessage() << std::endl;
-        } else {
-            std::cerr << "Erro do servidor: "
-                    << reply.getMessage() << std::endl;
-        }
-
-        client.closeConnection();
     }
     catch (const std::exception& e) {
-        std::cerr << "Erro: " << e.what() << std::endl;
+        exibirErro(std::string("Erro Inesperado: ") + e.what());
         return 1;
     }
 
