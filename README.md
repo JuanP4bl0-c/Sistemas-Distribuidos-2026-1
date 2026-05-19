@@ -5,30 +5,42 @@ Praticas e Trabalho em dupla feito com C++ como cliente e Java como servidor.
 
 ## 1. Sobre o Projeto
 
-Implementação de projeto de E-comerce de Aparelhos Celulares e acessórios, onde é trabalhado com serialização de Pojos de Porodutos e aplicação de requrst/reply em coneção TCP
+Aplicação de Invocação Remota em projeto de E-commerce de Aparelhos Celulares e acessórios. O projeto utiliza o middleware CORBA para viabilizar a interoperabilidade cross-language nativa, permitindo que um cliente construído em C++ interaja diretamente com um servidor implementado em Java, sem a criação manual de sockets de transporte.
 
 ## 2. Descrição do Projeto
 
-Este Projeto de um sistema distribuído de catálogo de produtos utilizando uma arquitetura Cliente-Servidor com objetivo central de demonstrar a comunicação entre tecnologias distintas onde o servidor é Java e o cliente é C++, onde é utilizado sockets TCP. É também trabalhado com os desafios inerentes à comunicação em rede, como a serialização de dados e a compatibilidade de arquitetura.
+Este projeto de um sistema distribuído de catálogo de produtos visa consolidar e demonstrar os conhecimentos práticos sobre Invocação Remota de Métodos e Representação Externa de Dados, onde é utilizado por pacotes estruturados no formato JSON.
 
 O projeto implementa um e-commerce de aparelhos celulares e acessórios, onde:
 
-- O **servidor** gerencia o catálogo de produtos, estoque e processamento de requisições,onde ao conectar com o cliente, consegue receber multipos produtos por inputstream. Ao encerrar o serviodr, é salvo um arquivo chamado "catalogo.csv" onde contem todos os dados do catalogo de produtos.
+- O **servidor** Gerencia o catálogo em memória. A infraestrutura foi totalmente estendida com:
 
-- O **cliente** Faz uma requisição de inserir uma stream de vetos de varios produtos distintos.
+    Esqueleto (Skeleton): Realiza o Unmarshalling (desempacotamento) do JSON interno recebido do C++, processa a lógica de negócio por valor nas entidades locais, executa a ação sobre o catálogo real e devolve a resposta no fluxo do método simulando o sendReply().
+
+    ServidorCatalogoImpl (Gerenciador do ORB): Captura os bytes do middleware, simulando o comportamento de getRequest(), expõe as mensagens no console e invoca os subsistemas de tratamento.
+
+    Despachante (Dispatcher): Analisa o envelope RPC, lê as propriedades textuais (objectReference, methodId) e roteia a requisição para o esqueleto correto.
+
+    - O **cliente** 
+
+    O Cliente (C++): Fornece uma interface em modo texto (Menu) que permite realizar operações no catálogo. Ele envelopa os dados na estrutura de uma Mensagem RPC baseada na Figura 5.2 do livro (contendo messageType, requestId, objectReference, methodId e arguments), converte o conteúdo em bytes nativos (CatalogoApp::ByteArray) e dispara a chamada através do Stub do CORBA.
+
+    O Middleware (CORBA): Atua como o protocolo de requisição-resposta subjacente. Ele resolve referências via Serviço de Nomes Transiente (tnameserv) e realiza o transporte de rede e o roteamento dos dados sem o uso de sockets manuais.
+
 
 
 ## 3. Como Executar
 
-### 3.1 Servidor Java
-
-
-Executar o CORBA:
+### 3.1 Executar o CORBA:
 
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 com.sun.corba.se.impl.naming.cosnaming.TransientNameServer -ORBInitialPort 1050
 
+### 3.2 Executar o Cliente: 
 
- executar o Servidor:
- /usr/lib/jvm/java-8-openjdk-amd64/bin/javac -cp .:json-20240303.jar Servidor_java/*.java CatalogoApp/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
+./bin/cliente -ORBInitRef NameService=corbaloc:iiop:192.168.0.6:1050/NameService
 
- /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort 1050 -ORBInitialHost 192.168.0.6
+### 3.3 Executar o Servidor:
+
+/usr/lib/jvm/java-8-openjdk-amd64/bin/javac -cp .:json-20240303.jar Servidor_java/*.java CatalogoApp/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
+
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort 1050 -ORBInitialHost 192.168.0.6
