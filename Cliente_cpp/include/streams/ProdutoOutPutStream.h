@@ -29,6 +29,8 @@ public:
         int qtd,
         std::ostream& out);
 
+    /// Serializa a lista de produtos para o stream `out` no formato binário
+    /// utilizado pelo protocolo (int, string, double em big-endian etc.).
     void write();
 };
 

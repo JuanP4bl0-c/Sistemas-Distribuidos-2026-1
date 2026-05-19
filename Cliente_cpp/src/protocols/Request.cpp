@@ -6,7 +6,8 @@
 #include <sstream>
 #include <iomanip>
 
-// ➔ OPERAÇÃO 1: LISTAR (Gera o envelope JSON estruturado para o Despachante Java)
+// Operação 1 — LISTAR
+// Gera o envelope JSON que solicita a listagem de produtos ao despachante Java.
 std::vector<char> Request::buildListProdutos() {
     std::stringstream ss;
     ss << "{"
@@ -19,7 +20,9 @@ std::vector<char> Request::buildListProdutos() {
     return std::vector<char>(str.begin(), str.end());
 }
 
-// ➔ OPERAÇÃO 2: ADICIONAR (Gera os argumentos polimórficos lidos pelo Esqueleto Java)
+// Operação 2 — ADICIONAR
+// Constrói o JSON de argumentos para adicionar produtos. O formato segue o
+// contrato esperado pelo esqueleto Java (campo "tipo" e atributos polimórficos).
 std::vector<char> Request::buildAddProdutos(const std::vector<std::shared_ptr<Produto>>& produtos) {
     if (produtos.empty()) return std::vector<char>();
 

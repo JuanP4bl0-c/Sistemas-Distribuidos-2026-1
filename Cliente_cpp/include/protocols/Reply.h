@@ -13,7 +13,8 @@ private:
 public:
     Reply(uint32_t type, const std::string& message);
 
-    // Interpreta os dados recebidos do servidor
+    /// Interpreta os dados brutos recebidos do servidor e constrói um `Reply`.
+    /// Espera que os primeiros 4 bytes contenham um código em network byte order.
     static Reply parse(const std::vector<char>& data);
 
     uint32_t getMessageType() const;

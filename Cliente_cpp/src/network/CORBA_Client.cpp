@@ -2,14 +2,14 @@
 #include <iostream>
 #include <stdexcept>
 
-// Implementação do Construtor
+// Implementação do construtor: inicializa ORB e resolve referência ao serviço
 CorbaClient::CorbaClient(int argc, char** argv, const std::string& nomeServico) 
     : inicializado(false) {
     try {
-        // 1. Inicializa o ORB interno do omniORB
+        // 1) Inicializa o ORB (omniORB)
         orb = CORBA::ORB_init(argc, argv);
 
-        // 2. Resolve o Serviço de Nomes inicial
+        // 2) Resolve o NameService inicial
         CORBA::Object_var objNS = orb->resolve_initial_references("NameService");
         CosNaming::NamingContext_var inc = CosNaming::NamingContext::_narrow(objNS);
 
@@ -18,12 +18,12 @@ CorbaClient::CorbaClient(int argc, char** argv, const std::string& nomeServico)
             return;
         }
 
-        // 3. Prepara o nome estruturado do serviço
+        // 3) Prepara o nome do serviço no contexto de nomes
         CosNaming::Name name;
         name.length(1);
         name[0].id = CORBA::string_dup(nomeServico.c_str());
 
-        // 4. Resolve o objeto do servidor Java e faz o unchecked_narrow
+        // 4) Resolve o objeto remoto e faz _unchecked_narrow para o tipo esperado
         CORBA::Object_var objServidor = inc->resolve(name);
         servidor = CatalogoApp::ServicoCatalogo::_unchecked_narrow(objServidor);
 

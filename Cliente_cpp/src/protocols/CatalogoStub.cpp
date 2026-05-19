@@ -8,12 +8,15 @@
 CatalogoStub::CatalogoStub(CorbaClient& clienteRede, const std::string& objectReference)
     : transporteCORBA(clienteRede), objectRef(objectReference) {}
 
-// ➔ OPERAÇÃO 1: LISTAR (Modificada para tratar a resposta JSON do Despachante Java)
+// Operação 1 — LISTAR
+// Envia uma requisição JSON para o despachante Java e recebe o envelope
+// de resposta em JSON. O stub imprime o JSON recebido e retorna um vetor
+// vazio (a desserialização completa fica a cargo do despachante/esqueleto).
 std::vector<std::shared_ptr<Produto>> CatalogoStub::listarProdutos() {
-    // 1. Stub prepara a requisição JSON de listagem
+    // 1) Prepara a requisição JSON de listagem
     auto requestData = Request::buildListProdutos();
 
-    // 2. Stub despacha através do transporte CORBA com o methodId = 1
+    // 2) Despacha via transporte CORBA usando methodId = 1
     std::vector<char> replyData = transporteCORBA.doOperation(objectRef, 1, requestData);
 
     if (replyData.empty()) {
@@ -21,15 +24,14 @@ std::vector<std::shared_ptr<Produto>> CatalogoStub::listarProdutos() {
         return std::vector<std::shared_ptr<Produto>>();
     }
 
-    // 3. Converte a resposta binária diretamente na String JSON que o Java enviou
+    // 3) Converte os bytes de resposta para a string JSON enviada pelo servidor Java
     std::string jsonResposta(replyData.begin(), replyData.end());
     
-    // Imprime o JSON estruturado diretamente na tela (Atendendo ao formato do livro)
+    // Exibe o envelope RPC (JSON) recebido do esqueleto Java
     std::cout << "\n>>> Envelope RPC de Resposta (JSON recebido do Esqueleto Java): <<<\n";
     std::cout << jsonResposta << "\n";
 
-    // Retornamos um vetor vazio para o main não quebrar, já que a exibição textual do JSON 
-    // mapeia com perfeição o requisito de entrega do Despachante/Esqueleto.
+    // Retorna vetor vazio: a exibição textual do JSON satisfaz o requisito atual.
     return std::vector<std::shared_ptr<Produto>>(); 
 }
 

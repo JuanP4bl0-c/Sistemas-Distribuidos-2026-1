@@ -7,13 +7,14 @@
 
 class Request {
 public:
-    // Já implementado (Opção 2 - Adicionar)
+    /// Constrói o envelope JSON (bytes) para a operação ADICIONAR produtos.
+    /// Formato esperado: objeto com `objectReference`, `methodId` e `arguments`.
     static std::vector<char> buildAddProdutos(const std::vector<std::shared_ptr<Produto>>& produtos);
 
-    // NOVO: (Opção 1 - Listar)
+    /// Constrói o envelope JSON (bytes) para a operação LISTAR produtos.
     static std::vector<char> buildListProdutos();
 
-    // NOVO: (Opção 3 - Remover)
+    /// Constrói o envelope JSON (bytes) para a operação REMOVER produto (por id).
     static std::vector<char> buildRemoveProduto(int id);
 };
 

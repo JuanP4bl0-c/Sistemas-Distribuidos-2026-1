@@ -5,7 +5,7 @@
 #include "modelos/PowerBank.h"
 #include "utils/Config.h"
 
-// ➔ Novas camadas organizadas de infraestrutura e protocolos
+// Camadas de infraestrutura e protocolos (transporte e stub de negócio)
 #include "network/CORBA_Client.h"
 #include "protocols/CatalogoStub.h"
 
@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     try {
         Config config("config/Config.txt");
 
-        // 1. Inicializa a camada de transporte CORBA
+        // 1) Inicializa a camada de transporte CORBA
         CorbaClient client(argc, argv, "CatalogoRemoto");
 
         if (!client.isConnected()) {
@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        // 2. Instancia o Stub (Proxy) injetando a rede CORBA nele
-        // A partir daqui, o main conversa APENAS com o stub!
+        // 2) Instancia o Stub (proxy) injetando a camada de transporte
+        // A partir daqui, o `main` interage apenas com o `CatalogoStub`.
         CatalogoStub stub(client, "CatalogoRemoto");
 
         bool rodando = true;

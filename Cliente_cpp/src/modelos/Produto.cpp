@@ -1,15 +1,15 @@
 #include "modelos/Produto.h"
 
-// 🔹 Construtor
+// Construtor: inicializa campos base do produto
 Produto::Produto(int id, const std::string& nome, const std::string& descricao, double preco, int quantidade_estoque)
                 : id(id), nome(nome), descricao(descricao), preco(preco), quantidade_estoque(quantidade_estoque) {}
 
-// 🔹 Retorna o tipo base
+// Retorna o tipo base do produto
 TipoProduto Produto::getTipo() const {
     return TipoProduto::PRODUTO;
 }
 
-// 🔹 Exibição padrão
+// Exibição padrão: imprime informações básicas do produto
 void Produto::mostrar() const {
     std::cout << "ID: " << id
               << " | Nome: " << nome
@@ -19,7 +19,7 @@ void Produto::mostrar() const {
               << std::endl;
 }
 
-// 🔹 Getters
+// Getters
 int Produto::getId() const { return id; }
 std::string Produto::getNome() const { return nome; }
 std::string Produto::getDescricao() const { return descricao; }

@@ -3,10 +3,11 @@
 #include <sstream>
 #include <stdexcept>
 
+// Lê arquivo de configuração no formato KEY=VALUE (ex: IP=127.0.0.1, PORT=8080)
 Config::Config(const std::string& filename) : port(0) {
     std::ifstream file(filename);
     if (!file)
-        throw std::runtime_error("Não foi possível abrir o arquivo de configuração.");
+        throw std::runtime_error("Não foi possível abrir o arquivo de configuração: " + filename);
 
     std::string line;
     while (std::getline(file, line)) {

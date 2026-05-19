@@ -12,16 +12,16 @@ private:
     bool inicializado;
 
 public:
-    // Construtor
+    /// Construtor: inicializa o ORB e resolve o objeto remoto pelo NameService
     CorbaClient(int argc, char** argv, const std::string& nomeServico);
-    
-    // Destrutor
+
+    /// Destrutor: limpa recursos do ORB
     ~CorbaClient();
 
-    // Executa a chamada remota de 3 parâmetros condizente com o Java
+    /// Executa uma operação remota enviando `requestData` e retornando os bytes da resposta
     std::vector<char> doOperation(const std::string& objectRef, long methodId, const std::vector<char>& requestData);
 
-    // Retorna o estado da conexão
+    /// Indica se o cliente está conectado ao serviço remoto
     bool isConnected() const;
 };
 

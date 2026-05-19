@@ -22,10 +22,10 @@ public:
 
     virtual ~Produto() = default;
 
-    // Identificação do tipo do produto
+    /// Retorna o tipo do produto (enum `TipoProduto`).
     virtual TipoProduto getTipo() const;
 
-    // Método virtual para exibição
+    /// Exibe informações do produto por `std::cout`.
     virtual void mostrar() const;
 
     // Getters

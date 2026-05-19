@@ -24,7 +24,8 @@ private:
 public:
     explicit ProdutoInputStream(std::istream& in);
 
-    // Retorna uma lista polimórfica
+    /// Lê e desserializa produtos do stream, retornando um vetor polimórfico.
+    /// Lê campos em big-endian conforme o formato aplicado por `ProdutoOutputStream`.
     std::vector<std::shared_ptr<Produto>> read();
 };
 

@@ -8,7 +8,7 @@ Reply::Reply(uint32_t type, const std::string& message)
 
 Reply Reply::parse(const std::vector<char>& data) {
     if (data.size() < sizeof(uint32_t)) {
-        throw std::runtime_error("Resposta inválida.");
+        throw std::runtime_error("Resposta inválida: dados insuficientes.");
     }
 
     uint32_t netCode;
