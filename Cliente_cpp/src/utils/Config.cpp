@@ -3,18 +3,11 @@
 #include <sstream>
 #include <stdexcept>
 
-<<<<<<< HEAD
 // Lê arquivo de configuração no formato KEY=VALUE (ex: IP=127.0.0.1, PORT=8080)
 Config::Config(const std::string& filename) : port(0) {
     std::ifstream file(filename);
     if (!file)
         throw std::runtime_error("Não foi possível abrir o arquivo de configuração: " + filename);
-=======
-Config::Config(const std::string& filename) : port(0) {
-    std::ifstream file(filename);
-    if (!file)
-        throw std::runtime_error("Não foi possível abrir o arquivo de configuração.");
->>>>>>> Entrega_2_Invocacao_Remota
 
     std::string line;
     while (std::getline(file, line)) {

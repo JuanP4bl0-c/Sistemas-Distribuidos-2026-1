@@ -4,17 +4,10 @@
 #include <cstdint>
 #include <stdexcept>
 
-<<<<<<< HEAD
 // Construtor: inicializa o leitor de stream para desserialização de produtos
 ProdutoInputStream::ProdutoInputStream(std::istream& in) : in(in) {}
 
 // Lê um inteiro em formato big-endian do stream
-=======
-// 🔹 Construtor
-ProdutoInputStream::ProdutoInputStream(std::istream& in) : in(in) {}
-
-// 🔹 Lê inteiro em big-endian
->>>>>>> Entrega_2_Invocacao_Remota
 int ProdutoInputStream::readInt() {
     uint32_t net;
     in.read(reinterpret_cast<char*>(&net), sizeof(net));
@@ -25,11 +18,7 @@ int ProdutoInputStream::readInt() {
     return static_cast<int>(ntohl(net));
 }
 
-<<<<<<< HEAD
 // Lê um double em formato big-endian do stream
-=======
-// 🔹 Lê double em big-endian
->>>>>>> Entrega_2_Invocacao_Remota
 double ProdutoInputStream::readDouble() {
     uint64_t temp;
     in.read(reinterpret_cast<char*>(&temp), sizeof(temp));
@@ -46,11 +35,7 @@ double ProdutoInputStream::readDouble() {
     return value;
 }
 
-<<<<<<< HEAD
 // Lê uma string no formato [tamanho][bytes]
-=======
-// 🔹 Lê string no formato [tamanho][bytes]
->>>>>>> Entrega_2_Invocacao_Remota
 std::string ProdutoInputStream::readString() {
     int size = readInt();
 
