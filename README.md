@@ -33,14 +33,14 @@ O projeto implementa um e-commerce de aparelhos celulares e acessórios, onde:
 
 ### 3.1 Executar o CORBA:
 
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 com.sun.corba.se.impl.naming.cosnaming.TransientNameServer -ORBInitialPort 1050
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=(INSIRA O IP DO SERVIDOR) com.sun.corba.se.impl.naming.cosnaming.TransientNameServer -ORBInitialPort (DEFINA A PORTA A SER UTILIZADA)
 
 ### 3.2 Executar o Cliente: 
 
-./bin/cliente -ORBInitRef NameService=corbaloc:iiop:192.168.0.6:1050/NameService
+./bin/cliente -ORBInitRef NameService=corbaloc:iiop:(INSIRA O IP DO SERVIDOR):(INSIRA A PORTA DO SERVIDOR)/NameService
 
 ### 3.3 Executar o Servidor:
 
 /usr/lib/jvm/java-8-openjdk-amd64/bin/javac -cp .:json-20240303.jar Servidor_java/*.java CatalogoApp/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
 
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort 1050 -ORBInitialHost 192.168.0.6
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=(INSIRA O IP DO SERVIDOR) -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort (INSIRA A PORTA DEFINIDA NO CORBA) -ORBInitialHost (INSIRA O IP DO SERVIDOR)
