@@ -1,6 +1,7 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
+<<<<<<< HEAD
 #include "modelos/Produto.h"
 #include <vector>
 #include <memory>
@@ -19,3 +20,17 @@ public:
 };
 
 #endif // REQUEST_H
+=======
+#include <vector>
+#include <memory>
+#include <cstdint>
+#include "modelos/Produto.h"
+
+class Request {
+public:
+    static std::vector<char> buildAddProdutos(
+        const std::vector<std::shared_ptr<Produto>>& produtos);
+};
+
+#endif
+>>>>>>> Entrega_2_Invocacao_Remota

@@ -4,20 +4,32 @@
 #include <cstdint>
 #include <stdexcept>
 
+<<<<<<< HEAD
 // Construtor: prepara o escritor binário para serializar produtos
+=======
+// 🔹 Construtor
+>>>>>>> Entrega_2_Invocacao_Remota
 ProdutoOutputStream::ProdutoOutputStream(
     const std::vector<std::shared_ptr<Produto>>& produtos,
     int qtd,
     std::ostream& out)
     : produtos(produtos), qtd(qtd), out(out) {}
 
+<<<<<<< HEAD
 // Escreve um inteiro em formato big-endian no stream de saída
+=======
+// 🔹 Escreve inteiro em big-endian
+>>>>>>> Entrega_2_Invocacao_Remota
 void ProdutoOutputStream::writeInt(int value) {
     uint32_t net = htonl(static_cast<uint32_t>(value));
     out.write(reinterpret_cast<char*>(&net), sizeof(net));
 }
 
+<<<<<<< HEAD
 // Escreve um double em formato big-endian no stream de saída
+=======
+// 🔹 Escreve double em big-endian
+>>>>>>> Entrega_2_Invocacao_Remota
 void ProdutoOutputStream::writeDouble(double value) {
     static_assert(sizeof(double) == 8, "Double deve ter 8 bytes");
 
@@ -31,13 +43,21 @@ void ProdutoOutputStream::writeDouble(double value) {
     out.write(reinterpret_cast<char*>(&temp), sizeof(temp));
 }
 
+<<<<<<< HEAD
 // Escreve uma string no formato [tamanho][bytes]
+=======
+// 🔹 Escreve string como [tamanho][bytes]
+>>>>>>> Entrega_2_Invocacao_Remota
 void ProdutoOutputStream::writeString(const std::string& str) {
     writeInt(static_cast<int>(str.size()));
     out.write(str.data(), str.size());
 }
 
+<<<<<<< HEAD
 // Serializa um produto levando em conta seu tipo (polimorfismo)
+=======
+// 🔹 Serializa um produto considerando seu tipo
+>>>>>>> Entrega_2_Invocacao_Remota
 void ProdutoOutputStream::writeProduto(const std::shared_ptr<Produto>& produto) {
     // 1. Escreve o tipo do produto
     writeInt(static_cast<int>(produto->getTipo()));
