@@ -1,6 +1,5 @@
 package Servidor_java.Modelos;
 
-
 public class Produto {
 
     private int id;
@@ -33,6 +32,8 @@ public class Produto {
 
     public int getEstoque() { return estoque; }
     public void setEstoque(int estoque) { this.estoque = estoque; }
+
+    public String getTipo() { return getClass().getSimpleName(); }
 
     public String toString() {
         return "Produto [id=" + id + ", nome=" + nome + ", preco=" + preco + ", estoque=" + estoque + "]";

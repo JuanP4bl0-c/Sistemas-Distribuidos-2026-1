@@ -5,6 +5,10 @@ public class Celular extends Produto{
     private String modelo;
     
 
+    public Celular(){
+        super();
+    }
+
     public Celular(int id,String nome,String descricao,double preco,int estoque,String marca,String modelo){
 
         super(id,nome,descricao,preco,estoque);

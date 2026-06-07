@@ -6,6 +6,10 @@ public class PowerBank extends Produto {
     private String modelo;
     private int capacidade;
 
+    public PowerBank(){
+        super();
+    }
+
     public PowerBank(int id,String nome, String descricao,double preco,int estoque,String marca,String modelo,int capacidade){
 
         super(id,nome,descricao,preco,estoque);

@@ -6,6 +6,10 @@ public class Pelicula extends Produto{
     private String material;
     
 
+    public Pelicula(){
+        super();
+    }
+
     public Pelicula(int id,String nome,String descricao,double preco,int estoque,String modelo,String material){
 
         super(id,nome,descricao,preco,estoque);

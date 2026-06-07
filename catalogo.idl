@@ -1,5 +1,5 @@
 module CatalogoApp {
-    // Define o array de bytes para empacotar os argumentos (JSON/Protobuf)
+    // Define o array de bytes para empacotar os argumentos
     typedef sequence<octet> ByteArray;
 
     // A interface do seu serviço remoto

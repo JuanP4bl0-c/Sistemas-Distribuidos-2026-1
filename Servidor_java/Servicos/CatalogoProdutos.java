@@ -18,9 +18,7 @@ import Servidor_java.Stream.PojoOutputStream;
  *
  * Responsabilidades principais:
  * - Manter uma lista interna de `Produto`.
- * - Fornecer operações básicas de CRUD (adicionar, buscar, remover).
  * - Fornecer utilitários para serializar/deserializar através de streams
- *   (usados na comunicação por socket/protocolo proprietário).
  */
 public class CatalogoProdutos {
 
@@ -134,7 +132,7 @@ public class CatalogoProdutos {
     }
 
     /**
-     * Remove produto via leitura do id em um InputStream (protocolo binário).
+     * Remove produto via leitura do id em um InputStream.
      */
     public void RemoverProduto_Stream(InputStream entrada, OutputStream saida) throws IOException {
         byte[] id_buffer = new byte[4];
