@@ -10,26 +10,37 @@ import Servidor_java.Servicos.ProdutoController;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.sun.net.httpserver.*;
+
+
 
 public class Servidor {
     private static final int PORTA = 8000;
 
     public static void main(String args[]) {
-        try {
-            ProdutoController controller = new ProdutoController();
-            HttpServer server = HttpServer.create(new InetSocketAddress("192.168.0.6",PORTA), 0);
-            server.createContext("/api/produtos", new ProdutoHandler(controller));
-            server.createContext("/api/vendas", new ProdutoHandler(controller));
-            server.setExecutor(null);
-            server.start();
 
-            System.out.println("\n Servidor HTTP ativo:" + PORTA + "/api/produtos \n");
+        Properties props = new Properties();
+        
+        try (InputStream in = Files.newInputStream(Path.of("Servidor_java","servidor.properties"))) {
+                props.load(in);
 
+                String host = props.getProperty("host");
+                int porta = Integer.parseInt(props.getProperty("port", String.valueOf(PORTA)));
 
+                ProdutoController controller = new ProdutoController();
+                HttpServer server = HttpServer.create(new InetSocketAddress(host, porta), 0);
+                server.createContext("/api/produtos", new ProdutoHandler(controller));
+                server.createContext("/api/vendas", new ProdutoHandler(controller));
+                server.setExecutor(null);
+                server.start();
+
+                System.out.println("\nServidor HTTP ativo: " + host + ":" + porta + "\n");
         } catch (Exception e) {
-            System.err.println("Erro no servidor: " + e.getMessage());
-            e.printStackTrace();
+                System.err.println("Erro no servidor: " + e.getMessage());
+                e.printStackTrace();
         }
     }
 
