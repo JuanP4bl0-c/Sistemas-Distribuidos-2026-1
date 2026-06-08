@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #include "modelos/Produto.h"
 #include "modelos/Celular.h"
 #include "modelos/Capa.h"
@@ -10,95 +11,106 @@
 #include "network/CORBA_Client.h"
 #include "protocols/CatalogoStub.h"
 
+=======
+>>>>>>> Stashed changes
 #include <iostream>
-#include <vector>
 #include <memory>
-#include <string>
+#include <string> // Necessário para std::getline
+#include "produtoAPI.h" 
+#include "modelos/Vendedor.h"
 
-void exibirErro(const std::string& msg) {
-    std::cerr << "\n[ERRO] " << msg << "\n";
+// Função auxiliar para realizar o login
+std::shared_ptr<Vendedor> realizarLogin() {
+    std::string nome, vendid;
+    std::cout << "\n=== LOGIN DE GESTOR ===" << std::endl;
+    std::cout << "Nome do Gestor: ";
+    std::getline(std::cin, nome);
+    std::cout << "ID do Gestor: ";
+    std::getline(std::cin, vendid);
+    
+    // Retorna um Vendedor validado (ou você pode adicionar lógica de verificação aqui)
+    return std::make_shared<Vendedor>(nome, vendid);
 }
 
-int main(int argc, char** argv) {
-    try {
-        Config config("config/Config.txt");
+int main() {
+    ProdutoAPI api;
 
-        // 1) Inicializa a camada de transporte CORBA
-        CorbaClient client(argc, argv, "CatalogoRemoto");
+    // 1. Validação inicial: O programa não segue se o login não ocorrer
+    auto gestorAtual = realizarLogin();
 
-        if (!client.isConnected()) {
-            exibirErro("Falha crítica: Cliente C++ não conseguiu se conectar ao NameService.");
-            return 1;
-        }
+    std::cout << "\n=====================================\n";
+    std::cout << " BEM-VINDO AO SISTEMA DE VENDAS\n";
+    std::cout << " Gestor autenticado: " << gestorAtual->nome << " (ID: " << gestorAtual->id << ")\n";
+    std::cout << "=====================================\n";
+    
+    int opcao;
+    do {
+        std::cout << "\n=== MENU DO CLIENTE C++ ===" << std::endl;
+        std::cout << "1. Listar Produtos (Exige Autenticacao REST)" << std::endl;
+        std::cout << "2. Adicionar Produto (POST)" << std::endl;
+        std::cout << "3. Deletar Produto (DELETE)" << std::endl;
+        std::cout << "4. Realizar Venda (POST para /vendas)" << std::endl;
+        std::cout << "0. Sair" << std::endl;
+        std::cout << "Escolha uma opcao: ";
+        std::cin >> opcao;
+        std::cin.ignore(); // Limpa o buffer após o cin >> opcao
 
-        // 2) Instancia o Stub (proxy) injetando a camada de transporte
-        // A partir daqui, o `main` interage apenas com o `CatalogoStub`.
-        CatalogoStub stub(client, "CatalogoRemoto");
-
-        bool rodando = true;
-        while (rodando) {
-            std::cout << "\n========================================\n";
-            std::cout << "        MENU CATALOGO CORBA (C++)       \n";
-            std::cout << "========================================\n";
-            std::cout << "1. Listar Produtos do Catalogo\n";
-            std::cout << "2. Adicionar Carga de Teste (Produtos)\n";
-            std::cout << "3. Remover Produto por ID\n";
-            std::cout << "0. Sair\n";
-            std::cout << "Escolha uma opcao: ";
-            
-            int opcao;
-            std::cin >> opcao;
-
-            switch (opcao) {
-                case 1: {
-                    std::cout << "\n[Enviando] Solicitando listagem do catalogo...\n";
-                    
-                    // O Stub executa a chamada, captura o JSON do Java e já imprime na tela!
-                    stub.listarProdutos(); 
-                    
-                    std::cout << "\n========================================\n";
-                    break;
-                }
+        switch(opcao) {
+            case 1:
+                // Passa o gestor validado no login para a API
+                api.listarProdutos(gestorAtual);
+                break;
                 
-                case 2: {
-                    std::cout << "\n[Enviando] Preparando carga de produtos para cadastro...\n";
-                    
-                    std::vector<std::shared_ptr<Produto>> lista = {
-                        std::make_shared<Celular>(1, "IPhone 15", "Apple celular", 5000.0, 5, "Apple", "15 Pro"),
-                        std::make_shared<Capa>(2, "Capa Iphone", "Capa azul", 15.0, 20, "Iphone 15", "Plastico"),
-                        std::make_shared<Pelicula>(3, "Pelicula", "5 polegadas", 25.50, 15, "Iphone 15", "Vidro"),
-                        std::make_shared<PowerBank>(4, "Power Bank", "Bateria", 200.0, 10, "Xiaomi", "10000mAh", 1000)
-                    };
+            case 2: {
+                std::string nome, desc;
+                double preco;
+                int qtd, id;
 
-                    // O Stub engole a lista de produtos, empacota e devolve a String de status limpa
-                    std::string resultado = stub.adicionarProdutos(lista);
-                    std::cout << "\n>>> [Status do Servidor]: " << resultado << "\n";
-                    break;
-                }
-                
-                case 3: {
-                    std::cout << "\nDigite o ID do produto que deseja remover: ";
-                    int idRemover;
-                    std::cin >> idRemover;
+                std::cout << "ID: "; std::cin >> id;
+                std::cin.ignore();
+                std::cout << "Nome: "; std::getline(std::cin, nome);
+                std::cout << "Descricao: "; std::getline(std::cin, desc);
+                std::cout << "Preco: "; std::cin >> preco;
+                std::cout << "Estoque: "; std::cin >> qtd;
 
-                    std::cout << "[Enviando] Solicitando exclusao do ID " << idRemover << "...\n";
+                // Cria o produto
+                auto novoProduto = std::make_shared<Produto>(id, nome, desc, preco, qtd);
+                
+                // Associa o vendedor logado ao novo produto (Agregação)
+                novoProduto->setVendedor(gestorAtual);
 
-                    // Chamada transparente passando o ID puro
-                    std::string resultado = stub.removerProduto(idRemover);
-                    std::cout << "\n>>> [Status do Servidor]: " << resultado << "\n";
-                    break;
-                }
-                
-                case 0:
-                    std::cout << "\nEncerrando o cliente CORBA. Ate logo!\n";
-                    rodando = false;
-                    break;
-                
-                default:
-                    exibirErro("Opcao invalida! Tente novamente.");
-                    break;
+                // Envia para o servidor
+                api.adicionarProduto(novoProduto);
+                break;
             }
+
+            case 3: {
+                int idParaDeletar;
+                std::cout << "Digite o ID do produto para deletar: ";
+                std::cin >> idParaDeletar;
+                api.deletarProduto(idParaDeletar);
+                break;
+            }
+            case 4: { // Opção de Venda
+                int pid, qtd;
+                std::cout << "ID do produto para venda: ";
+                std::cin >> pid;
+                std::cout << "Quantidade: ";
+                std::cin >> qtd;
+                
+                // O gestor logado (gestorAtual) é passado automaticamente como o vendedor
+                api.realizarVenda(pid, qtd, gestorAtual);
+                break;
+            }
+                
+            case 0:
+                std::cout << "A encerrar sessao..." << std::endl;
+                break;
+                
+            default:
+                std::cout << "Opcao invalida!" << std::endl;
         }
+<<<<<<< Updated upstream
     }
     catch (const std::exception& e) {
         exibirErro(std::string("Erro Inesperado: ") + e.what());
@@ -188,5 +200,9 @@ int main() {
     }
 
 >>>>>>> Entrega_2_Invocacao_Remota
+=======
+    } while(opcao != 0);
+    
+>>>>>>> Stashed changes
     return 0;
 }
