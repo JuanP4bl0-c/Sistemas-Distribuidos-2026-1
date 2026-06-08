@@ -1,148 +1,52 @@
 # ==============================
 # Configurações gerais
 # ==============================
-<<<<<<< Updated upstream
-TARGETS = cliente teste
-
-CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
-LDFLAGS = 
-
-SRC_DIR = src
-TEST_DIR = tests
-OBJ_DIR = obj
-BIN_DIR = bin
-=======
 TARGET = bin/cliente
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
+LDFLAGS = -lcurl 
 
-# Biblioteca do libcurl exigida para a API REST
-LDFLAGS = -lcurl
->>>>>>> Stashed changes
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
 # ==============================
 # Ficheiros fonte
 # ==============================
-<<<<<<< Updated upstream
-
-# Todos os .cpp do src (inclui modelos, streams, network, utils e protocols)
+# Busca todos os arquivos .cpp recursivamente em src/
 SRC_FILES = $(shell find $(SRC_DIR) -type f -name "*.cpp")
 
-# Arquivos de teste
-TEST_FILES = $(shell find $(TEST_DIR) -type f -name "*.cpp")
-
-# Separando o main do cliente
-CLIENT_MAIN = $(SRC_DIR)/main.cpp
-CLIENT_SRC  = $(filter-out $(CLIENT_MAIN), $(SRC_FILES))
-=======
-# Busca todos os ficheiros .cpp dentro da pasta src/ e de todas as subpastas
-SRC_FILES = $(shell find src -type f -name "*.cpp")
->>>>>>> Stashed changes
-
-# ==============================
-# Objetos
-# ==============================
-<<<<<<< Updated upstream
-
-# Objetos do cliente
-CLIENT_OBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CLIENT_SRC)) \
-             $(OBJ_DIR)/main.o
-
-# Objetos dos testes
-TEST_OBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CLIENT_SRC)) \
-           $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/tests/%.o,$(TEST_FILES))
+# Converte arquivos .cpp em .o na pasta obj/
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 # ==============================
 # Regra principal
 # ==============================
-
-all: $(TARGETS)
-
-# ==============================
-# Executável: cliente
-# ==============================
-
-cliente: $(CLIENT_OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $^ -o $(BIN_DIR)/$@ $(LDFLAGS)
-	@echo "Executável 'cliente' gerado em $(BIN_DIR)/cliente"
-
-# ==============================
-# Executável: teste
-# ==============================
-
-teste: $(TEST_OBJ)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $^ -o $(BIN_DIR)/$@ $(LDFLAGS)
-	@echo "Executável 'teste' gerado em $(BIN_DIR)/teste"
-
-# ==============================
-# Compilação genérica dos objetos
-=======
-# Mapeia os ficheiros .cpp para .o dentro da pasta obj/ (mantendo a árvore)
-OBJ_FILES = $(patsubst src/%.cpp,obj/%.o,$(SRC_FILES))
-
-# ==============================
-# Regras de Compilação
->>>>>>> Stashed changes
-# ==============================
 all: $(TARGET)
 
-<<<<<<< Updated upstream
-# Para arquivos do src (inclui protocols automaticamente)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-=======
-# Regra para compilar o executável final
-$(TARGET): $(OBJ_FILES)
->>>>>>> Stashed changes
-	@mkdir -p $(dir $@)
+# ==============================
+# Executável
+# ==============================
+$(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
 	$(CXX) $^ -o $@ $(LDFLAGS)
-	@echo "✅ Executável 'cliente' gerado com sucesso em $@"
+	@echo "✅ Executável '$(TARGET)' gerado com sucesso."
 
-<<<<<<< Updated upstream
-# Para arquivos de teste
-$(OBJ_DIR)/tests/%.o: $(TEST_DIR)/%.cpp
-=======
-# Regra genérica para compilar qualquer .cpp num .o
-obj/%.o: src/%.cpp
->>>>>>> Stashed changes
+# ==============================
+# Compilação dos objetos
+# ==============================
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # ==============================
-# Limpeza
+# Comandos úteis
 # ==============================
+run: all
+	./$(TARGET)
+
 clean:
-	rm -rf obj bin
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 	@echo "🧹 Pastas bin/ e obj/ limpas."
 
-<<<<<<< Updated upstream
-# ==============================
-# Execução rápida
-# ==============================
-
-run: cliente
-	./$(BIN_DIR)/cliente
-=======
-run: $(TARGET)
-	./$(TARGET)
->>>>>>> Stashed changes
-
-run_test: teste
-	./$(BIN_DIR)/teste
-
-# ==============================
-# Ajuda
-# ==============================
-
-help:
-	@echo "Comandos disponíveis:"
-	@echo "  make            - Compila cliente e testes"
-	@echo "  make cliente    - Compila apenas o cliente"
-	@echo "  make teste      - Compila apenas os testes"
-	@echo "  make run        - Executa o cliente"
-	@echo "  make run_test   - Executa os testes"
-	@echo "  make clean      - Remove arquivos compilados"
-
-.PHONY: all clean run run_test help
+.PHONY: all clean run
