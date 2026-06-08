@@ -1,16 +1,16 @@
 package Servidor_java;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.*;
+
+import Servidor_java.Modelos.*;
+import Servidor_java.Servicos.ProdutoController;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-
-import java.util.*;
-
 import com.sun.net.httpserver.*;
-import Servidor_java.Modelos.*;
 
 public class Servidor {
     private static final int PORTA = 8000;
@@ -18,13 +18,14 @@ public class Servidor {
     public static void main(String args[]) {
         try {
             ProdutoController controller = new ProdutoController();
-            HttpServer server = HttpServer.create(new InetSocketAddress(PORTA), 0);
+            HttpServer server = HttpServer.create(new InetSocketAddress("192.168.0.6",PORTA), 0);
             server.createContext("/api/produtos", new ProdutoHandler(controller));
+            server.createContext("/api/vendas", new ProdutoHandler(controller));
             server.setExecutor(null);
             server.start();
 
-            System.out.println("Servidor HTTP ativo em http://localhost:" + PORTA + "/api/produtos");
-            System.out.println("Endpoints: GET /api/produtos, GET /api/produtos/{id}, POST /api/produtos, DELETE /api/produtos/{id}");
+            System.out.println("\n Servidor HTTP ativo:" + PORTA + "/api/produtos \n");
+
 
         } catch (Exception e) {
             System.err.println("Erro no servidor: " + e.getMessage());
@@ -42,14 +43,59 @@ public class Servidor {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+
             try {
                 String method = exchange.getRequestMethod();
                 String path = exchange.getRequestURI().getPath();
                 String[] segmentos = path.split("/");
 
+                if ("/api/vendas".equals(path)) {
+                    if ("POST".equalsIgnoreCase(method)) {
+                        String corpo = lerCorpo(exchange.getRequestBody());
+                        Map<String, String> dados = parseJsonObject(corpo);
+
+                        // Extrai os dados do JSON recebido
+                        int produtoId = parseInt(dados.get("produto_id"), 0);
+                        int quantidade = parseInt(dados.get("quantidade"), 1);
+                        String vendedorId = dados.getOrDefault("vendedor_id", "");
+                        String vendedorNome = dados.getOrDefault("vendedor_nome", "");
+                        
+                        System.out.println("Recebida solicitação de venda: Produto ID=" + produtoId + ", Quantidade=" + quantidade + ", Vendedor ID=" + vendedorId + ", Vendedor Nome=" + vendedorNome);
+
+                        // Cria o vendedor apenas se os dados foram enviados
+                        Vendedor vendedor = null;
+                        if (!vendedorId.isEmpty() && !vendedorNome.isEmpty()) {
+                            vendedor = new Vendedor(vendedorId, vendedorNome);
+                        }
+
+                        // Tenta realizar a venda
+                        Vendas resultadoVenda = controller.VenderProduto(produtoId, quantidade, vendedor);
+
+                        if (resultadoVenda == null) {
+                            responderJson(exchange, 400, mensagemErroJson(400, "Venda falhou. Produto não encontrado ou estoque insuficiente."));
+                            System.out.println("Venda falhou para Produto ID=" + produtoId + ". Verifique se o produto existe e se há estoque suficiente.");
+                            return;
+                        }
+
+                        // Se a venda deu certo, extraímos o resumo e enviamos para o cliente C++
+                        String resumo = resultadoVenda.obterResumoVenda();
+                        String jsonResposta = "{\"status\":200,\"mensagem\":\"Venda realizada com sucesso!\",\"resumo\":\"" + escapeJson(resumo) + "\"}";
+                        
+                        responderJson(exchange, 200, jsonResposta);
+
+                        System.out.println(jsonResposta);
+                        return;
+                    }
+                }
+
+
                 if ("/api/produtos".equals(path)) {
+
+                    System.out.println("Recebida solicitação para /api/produtos com método " + method);
+
                     if ("GET".equalsIgnoreCase(method)) {
                         responderJson(exchange, 200, listaParaJson(controller.listarTodos()));
+                        System.out.println("Lista de produtos enviada para o cliente.");
                         return;
                     }
 
@@ -59,11 +105,12 @@ public class Servidor {
                         controller.adicionarProduto(produto);
 
                         responderJson(exchange, 201, respostaProdutoJson(201, "Produto adicionado com sucesso via API!", produto));
+                        System.out.println("Produto adicionado via API: " + produto);
                         return;
                     }
                 }
 
-                if (segmentos.length == 4 && segmentos[1].equals("api") && segmentos[2].equals("produtos")) {
+                if (segmentos.length == 4 && "api".equals(segmentos[1]) && "produtos".equals(segmentos[2])) {
                     int id = Integer.parseInt(segmentos[3]);
 
                     if ("GET".equalsIgnoreCase(method)) {
@@ -89,6 +136,7 @@ public class Servidor {
                 }
 
                 responderJson(exchange, 405, mensagemErroJson(405, "Método não permitido."));
+
             } catch (NumberFormatException e) {
                 responderJson(exchange, 400, mensagemErroJson(400, "ID inválido na URL."));
             } catch (Exception e) {

@@ -5,42 +5,51 @@ Praticas e Trabalho em dupla feito com C++ como cliente e Java como servidor.
 
 ## 1. Sobre o Projeto
 
-Aplicação de Invocação Remota em projeto de E-commerce de Aparelhos Celulares e acessórios. O projeto utiliza o middleware CORBA para viabilizar a interoperabilidade cross-language nativa, permitindo que um cliente construído em C++ interaja diretamente com um servidor implementado em Java, sem a criação manual de sockets de transporte.
+**Resumo:** O servidor foi reimplementado como uma API HTTP leve usando a biblioteca embutida `com.sun.net.httpserver` (classe `Servidor` em `Servidor_java/Servidor.java`). Ele expõe endpoints REST para gerenciar o catálogo de produtos e realizar vendas. Existe um cliente Python que consome essa API via `requests`. O cliente C++ local e o cliente CORBA permanecem no repositório como versões legadas/alternativas — o cliente C++ ativo está em outra máquina e, por solicitação, está sendo ignorado aqui.
 
 ## 2. Descrição do Projeto
 
-Este projeto de um sistema distribuído de catálogo de produtos visa consolidar e demonstrar os conhecimentos práticos sobre Invocação Remota de Métodos e Representação Externa de Dados, onde é utilizado por pacotes estruturados no formato JSON.
+- **Servidor (Java HTTP API):** implementado em `Servidor_java/Servidor.java`.
+    - Endpoints expostos:
+        - `GET /api/produtos` — lista todos os produtos (JSON).
+        - `POST /api/produtos` — adiciona um produto (JSON no corpo).
+        - `GET /api/produtos/{id}` — obtém produto por id.
+        - `DELETE /api/produtos/{id}` — remove produto por id.
+        - `POST /api/vendas` — realiza venda; aceita JSON com `produto_id`, `quantidade`, `vendedor_id` e `vendedor_nome`.
 
-O projeto implementa um e-commerce de aparelhos celulares e acessórios, onde:
+- **Lógica de negócio:** está em `ProdutoController.java` e em `Servidor_java/Servicos` (ex.: `CatalogoProdutos.java`) — catálogo em memória, operações de listagem, busca, adição, remoção e venda.
 
-- O **servidor** Gerencia o catálogo em memória. A infraestrutura foi totalmente estendida com:
+- **Clientes:**
+    - `Cliente_Python/cliente.py` — cliente que consome a API HTTP via `requests` (compatível com o requisito de comunicação por API/WS).
+        - Observação: a função `adicionar_produto` no script faz referência a `URL_BASE` em vez de `URL` — isso precisa ser corrigido antes de usar.
+    - `Cliente_cpp/` — cliente C++ que usa sockets TCP e streams binários (versão legada; cliente funcional correto reside em outra máquina por orientação do autor).
+    - Código CORBA em `Cliente_cpp/src/network` — middleware RMI-like mantido como legado.
 
-    Esqueleto (Skeleton): Realiza o Unmarshalling (desempacotamento) do JSON interno recebido do C++, processa a lógica de negócio por valor nas entidades locais, executa a ação sobre o catálogo real e devolve a resposta no fluxo do método simulando o sendReply().
+**Conformidade com o requisito:**
+- Requisito: "Comunicação cliente‑servidor via WS ou API. Não criar sockets ou RMI." 
+- Situação atual: o **servidor HTTP** + **cliente Python** cumprem o requisito. Contudo, o repositório contém implementações **legadas** que usam sockets (C++) e CORBA (RMI‑like); esses itens não cumprem o requisito se considerados parte do artefato final. Se o enunciado exige que todo código presente no repositório obedeça à restrição, então ainda há código não conforme.
 
-    ServidorCatalogoImpl (Gerenciador do ORB): Captura os bytes do middleware, simulando o comportamento de getRequest(), expõe as mensagens no console e invoca os subsistemas de tratamento.
+## 3. Como executar a API HTTP (passos mínimos)
 
-    Despachante (Dispatcher): Analisa o envelope RPC, lê as propriedades textuais (objectReference, methodId) e roteia a requisição para o esqueleto correto.
+1. Compile as classes Java do servidor (exemplo):
 
-    - O **cliente** 
+```bash
+javac -cp .:json-20240303.jar Servidor_java/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
+```
 
-    O Cliente (C++): Fornece uma interface em modo texto (Menu) que permite realizar operações no catálogo. Ele envelopa os dados na estrutura de uma Mensagem RPC baseada na Figura 5.2 do livro (contendo messageType, requestId, objectReference, methodId e arguments), converte o conteúdo em bytes nativos (CatalogoApp::ByteArray) e dispara a chamada através do Stub do CORBA.
+2. Execute o servidor HTTP (exemplo):
 
-    O Middleware (CORBA): Atua como o protocolo de requisição-resposta subjacente. Ele resolve referências via Serviço de Nomes Transiente (tnameserv) e realiza o transporte de rede e o roteamento dos dados sem o uso de sockets manuais.
+```bash
+java -cp .:json-20240303.jar Servidor_java.Servidor
+```
+
+3. (Cliente Python) Instale dependências e rode o cliente:
+
+```bash
+python3 -m pip install requests
+python3 Cliente_Python/cliente.py
+```
+
+Observação: o `Cliente_Python/cliente.py` tem um pequeno bug em `adicionar_produto` (usa `URL_BASE` não definido). Trocar por `URL` ou ajustar a função antes de usar.
 
 
-
-## 3. Como Executar
-
-### 3.1 Executar o CORBA:
-
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 com.sun.corba.se.impl.naming.cosnaming.TransientNameServer -ORBInitialPort 1050
-
-### 3.2 Executar o Cliente: 
-
-./bin/cliente -ORBInitRef NameService=corbaloc:iiop:192.168.0.6:1050/NameService
-
-### 3.3 Executar o Servidor:
-
-/usr/lib/jvm/java-8-openjdk-amd64/bin/javac -cp .:json-20240303.jar Servidor_java/*.java CatalogoApp/*.java Servidor_java/Modelos/*.java Servidor_java/Servicos/*.java
-
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Dcom.sun.CORBA.ORBServerHost=192.168.0.6 -cp .:json-20240303.jar Servidor_java.Servidor -ORBInitialPort 1050 -ORBInitialHost 192.168.0.6

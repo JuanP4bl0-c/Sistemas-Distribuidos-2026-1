@@ -1,6 +1,6 @@
 package Servidor_java.Servicos;
 
-import java.io.ByteArrayInputStream;
+// import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Servidor_java.Modelos.*;
-import Servidor_java.Stream.PojoInputStream;
-import Servidor_java.Stream.PojoOutputStream;
 
 /**
  * CatalogoProdutos: repositório em memória dos produtos disponíveis no sistema.
@@ -77,59 +75,59 @@ public class CatalogoProdutos {
      */
     public List<Produto> getTodos(){return ListaGeral;}
 
-    /**
-     * Serializa o catálogo para o `OutputStream` usando `PojoOutputStream`.
-     * Usado quando o servidor precisa enviar o catálogo para um cliente.
-     */
-    public void listarCatalogo_Stream(InputStream entrada, OutputStream saida) throws IOException {
-        List<Produto> lista = this.getTodos();
-        Produto[] array = lista.toArray(new Produto[0]);
+    // /**
+    //  * Serializa o catálogo para o `OutputStream` usando `PojoOutputStream`.
+    //  * Usado quando o servidor precisa enviar o catálogo para um cliente.
+    //  */
+    // public void listarCatalogo_Stream(InputStream entrada, OutputStream saida) throws IOException {
+    //     List<Produto> lista = this.getTodos();
+    //     Produto[] array = lista.toArray(new Produto[0]);
         
-        PojoOutputStream pos = new PojoOutputStream(array, array.length, saida);
-        pos.enviarDados();
-    }
+    //     PojoOutputStream pos = new PojoOutputStream(array, array.length, saida);
+    //     pos.enviarDados();
+    // }
 
     /**
      * Versão antiga de recebimento via stream: lê um buffer inteiro e desserializa
      * criando produtos. Mantida por compatibilidade/depuração.
      */
-    public void AdicionarProdutos_Stream_old(InputStream entrada, OutputStream saida) throws IOException {
-        byte[] tam_buffer = new byte[4];
-        entrada.read(tam_buffer);
-        int tamanho = ByteBuffer.wrap(tam_buffer).order(ByteOrder.BIG_ENDIAN).getInt();
+    // public void AdicionarProdutos_Stream_old(InputStream entrada, OutputStream saida) throws IOException {
+    //     byte[] tam_buffer = new byte[4];
+    //     entrada.read(tam_buffer);
+    //     int tamanho = ByteBuffer.wrap(tam_buffer).order(ByteOrder.BIG_ENDIAN).getInt();
         
-        byte[] data_buffer = new byte[tamanho];
-        entrada.read(data_buffer);
+    //     byte[] data_buffer = new byte[tamanho];
+    //     entrada.read(data_buffer);
         
-        PojoInputStream pis = new PojoInputStream(new ByteArrayInputStream(data_buffer));
+    //     PojoInputStream pis = new PojoInputStream(new ByteArrayInputStream(data_buffer));
 
-        int qtd = 1;  // Envia apenas 1 produto por vez (modo legado)
-        for(int i = 0; i < qtd; i++) {
-            Produto p = pis.lerProduto();
-            this.AdicionarProduto(p);
-            System.out.println("DEBUG: Adicionado = " + p);
-        }
-    }
+    //     int qtd = 1;  // Envia apenas 1 produto por vez (modo legado)
+    //     for(int i = 0; i < qtd; i++) {
+    //         Produto p = pis.lerProduto();
+    //         this.AdicionarProduto(p);
+    //         System.out.println("DEBUG: Adicionado = " + p);
+    //     }
+    // }
 
-    /**
-     * Nova versão: lê a quantidade em stream e desserializa múltiplos produtos.
-     * Trata IOException internamente para não quebrar o fluxo do servidor.
-     */
-    public void AdicionarProdutos_Stream(InputStream in, OutputStream out) {
-        try {
-            PojoInputStream pis = new PojoInputStream(in);
+    // /**
+    //  * Nova versão: lê a quantidade em stream e desserializa múltiplos produtos.
+    //  * Trata IOException internamente para não quebrar o fluxo do servidor.
+    //  */
+    // public void AdicionarProdutos_Stream(InputStream in, OutputStream out) {
+    //     try {
+    //         PojoInputStream pis = new PojoInputStream(in);
             
-            int quantidade = pis.lerInt(); 
-            for (int i = 0; i < quantidade; i++) {
-                Produto p = pis.lerProduto();
-                AdicionarProduto(p);
-                System.out.println("Produto recebido via rede: " + p.getNome());
-            }
+    //         int quantidade = pis.lerInt(); 
+    //         for (int i = 0; i < quantidade; i++) {
+    //             Produto p = pis.lerProduto();
+    //             AdicionarProduto(p);
+    //             System.out.println("Produto recebido via rede: " + p.getNome());
+    //         }
 
-        } catch (IOException e) {
-            System.out.println("Erro ao ler produtos do stream: " + e.getMessage());
-        }
-    }
+    //     } catch (IOException e) {
+    //         System.out.println("Erro ao ler produtos do stream: " + e.getMessage());
+    //     }
+    // }
 
     /**
      * Remove produto via leitura do id em um InputStream.

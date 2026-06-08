@@ -39,4 +39,5 @@ public class Produto {
         return "Produto [id=" + id + ", nome=" + nome + ", preco=" + preco + ", estoque=" + estoque + "]";
     }
 
+
 }
